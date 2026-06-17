@@ -11,6 +11,7 @@ import { AssociatePartners } from './components/AssociatePartners';
 import { Testimonials } from './components/Testimonials';
 import { InvestmentAccordion } from './components/InvestmentAccordion';
 import { CallToAction } from './components/CallToAction';
+import { Footer } from './components/Footer';
 function App() {
   return (
     <div className="bg-alabaster text-espresso antialiased">
@@ -28,6 +29,7 @@ function App() {
         <Testimonials />
         <InvestmentAccordion />
         <CallToAction />
+        <Footer />
       </main>
     </div>
   );
