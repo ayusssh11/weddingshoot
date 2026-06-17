@@ -22,7 +22,7 @@ export function Hero() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.2 }}
-          className="text-champagne uppercase tracking-[0.3em] text-xs md:text-sm font-semibold mb-6 block"
+          className="bg-orchid text-white px-5 py-2 rounded-full uppercase tracking-[0.25em] text-[10px] md:text-xs font-semibold mb-6 inline-block border border-white/10 shadow-lg"
         >
           Crafting Homecoming Memories Since 2010
         </motion.span>
