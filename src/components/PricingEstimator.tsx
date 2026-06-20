@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowRight, ArrowLeft, Check } from 'lucide-react';
 
@@ -296,34 +297,40 @@ export function PricingEstimator() {
       {/* Stylesheet specifically for printing a clean branded invoice */}
       <style>{`
         @media print {
-          body * { visibility: hidden; }
-          #estimator, #estimator * { visibility: visible; }
-          #estimator { position: absolute; left: 0; top: 0; width: 100%; background: white !important; }
-          .no-print { display: none !important; }
-          .print-only { display: block !important; }
+          @page { margin: 1cm; size: auto; }
+          body { background: white !important; margin: 0; padding: 0; overflow: auto; height: auto; }
+          #root { display: none !important; }
+          .print-only { display: block !important; position: static !important; }
           .print-brand { display: flex !important; }
           .print-header { border-bottom: 2px solid #8B337F; margin-bottom: 30px; padding-bottom: 20px; }
           .print-item { border-bottom: 1px solid #eee; margin-bottom: 15px; padding-bottom: 15px; }
           .print-total { border-top: 2px solid #120D16; padding-top: 20px; font-weight: bold; font-size: 1.5em; }
+          /* Ensure text is dark and visible */
+          .print-only p, .print-only span, .print-only h1, .print-only h3, .print-only div {
+            color: #120D16 !important;
+            opacity: 1 !important;
+          }
+          .print-header h1, .print-total p { color: #8B337F !important; }
         }
       `}</style>
 
       {/* Hidden PDF Printable Area */}
-      <div className="hidden print-only print-brand p-12 bg-white text-obsidian absolute top-0 left-0 w-full min-h-screen z-50">
-        <div className="w-full max-w-4xl mx-auto">
+      {typeof document !== 'undefined' && createPortal(
+        <div className="hidden print-only print-brand p-12 bg-white text-obsidian w-full z-50">
+          <div className="w-full max-w-4xl mx-auto">
           <div className="print-header flex justify-between items-end">
             <div>
               <h1 className="text-4xl font-serif text-plum mb-2">Wedding Shoot</h1>
-              <p className="text-charcoal/60 uppercase tracking-widest text-sm">Bespoke Investment Summary</p>
+              <p className="text-charcoal/90 uppercase tracking-widest text-sm">Bespoke Investment Summary</p>
             </div>
             <div className="text-right">
-              <p className="font-mono text-sm text-charcoal/50">REF: {quoteId}</p>
-              <p className="font-mono text-sm text-charcoal/50">DATE: {new Date().toLocaleDateString()}</p>
+              <p className="font-mono text-sm text-charcoal/80">REF: {quoteId}</p>
+              <p className="font-mono text-sm text-charcoal/80">DATE: {new Date().toLocaleDateString()}</p>
             </div>
           </div>
           
           <div className="mb-12">
-            <h3 className="text-sm font-bold uppercase tracking-widest text-charcoal/40 mb-4">Client Details</h3>
+            <h3 className="text-sm font-bold uppercase tracking-widest text-charcoal/70 mb-4">Client Details</h3>
             <p className="text-xl font-serif">{formData.fullName || 'Valued Client'}</p>
             <p className="text-charcoal/80">{formData.email}</p>
             <p className="text-charcoal/80">{formData.phone}</p>
@@ -331,12 +338,12 @@ export function PricingEstimator() {
           </div>
 
           <div className="mb-12">
-            <h3 className="text-sm font-bold uppercase tracking-widest text-charcoal/40 mb-6">Package Configuration</h3>
+            <h3 className="text-sm font-bold uppercase tracking-widest text-charcoal/70 mb-6">Package Configuration</h3>
             
             <div className="print-item flex justify-between">
               <div>
                 <p className="font-bold text-lg">{PRICING.events[formData.eventType].name}</p>
-                <p className="text-charcoal/60">{PRICING.events[formData.eventType].isFlat ? 'Flat rate package' : `${formData.duration} Day(s) of coverage`}</p>
+                <p className="text-charcoal/90">{PRICING.events[formData.eventType].isFlat ? 'Flat rate package' : `${formData.duration} Day(s) of coverage`}</p>
               </div>
               <p className="font-mono">{formatCurrency(pricingSummary.basePriceTotal)}</p>
             </div>
@@ -375,7 +382,7 @@ export function PricingEstimator() {
               <div className="print-item flex justify-between">
                 <div>
                   <p className="font-bold">Premium Legacy Albums</p>
-                  <p className="text-charcoal/60">Quantity: {formData.albumCount}</p>
+                  <p className="text-charcoal/90">Quantity: {formData.albumCount}</p>
                 </div>
                 <p className="font-mono">+{formatCurrency(pricingSummary.albumsTotal)}</p>
               </div>
@@ -385,7 +392,7 @@ export function PricingEstimator() {
               <div className="print-item flex justify-between">
                 <div>
                   <p className="font-bold">Event Scale: {PRICING.scale[formData.scale].name}</p>
-                  <p className="text-charcoal/60">Crew scaling factor applied</p>
+                  <p className="text-charcoal/90">Crew scaling factor applied</p>
                 </div>
                 <p className="font-mono">+{formatCurrency(pricingSummary.scalePrice)}</p>
               </div>
@@ -395,7 +402,7 @@ export function PricingEstimator() {
               <div className="print-item flex justify-between">
                 <div>
                   <p className="font-bold">Destination Logistics</p>
-                  <p className="text-charcoal/60">{PRICING.locations[formData.location].name} zone mapping</p>
+                  <p className="text-charcoal/90">{PRICING.locations[formData.location].name} zone mapping</p>
                 </div>
                 <p className="font-mono">+{formatCurrency(pricingSummary.logisticsPrice)}</p>
               </div>
@@ -407,12 +414,14 @@ export function PricingEstimator() {
             <p className="text-3xl">{formatCurrency(pricingSummary.grandTotal)}</p>
           </div>
           
-          <div className="mt-20 pt-10 border-t border-charcoal/10 text-center text-charcoal/40 text-xs italic">
+          <div className="mt-20 pt-10 border-t border-charcoal/10 text-center text-charcoal/70 text-xs italic">
             <p>This document is an estimate and not a binding contract. Travel & accommodation for destination events are billed at actuals.</p>
             <p className="mt-2">Valid for 14 days from generation date.</p>
           </div>
         </div>
-      </div>
+      </div>,
+      document.body
+    )}
 
       <div className="max-w-[85rem] mx-auto px-4 relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start relative z-10">
@@ -467,11 +476,11 @@ export function PricingEstimator() {
 
                   {/* Bottom: Total Block */}
                   <div className="bg-[#0f0a14] text-white rounded-2xl p-6 flex flex-col justify-center shadow-2xl relative z-10 mt-2">
-                    <span className="text-[8px] uppercase tracking-[0.2em] font-bold text-white/50 mb-2 block">Total Estimate</span>
+                    <span className="text-[8px] uppercase tracking-[0.2em] font-bold text-white/80 mb-2 block">Total Estimate</span>
                     <span className="text-3xl font-serif font-bold text-white mb-2 tracking-tight">
                       {formatCurrency(pricingSummary.grandTotal)}
                     </span>
-                    <p className="text-[8px] text-white/30 italic leading-relaxed mb-6">
+                    <p className="text-[8px] text-white/60 italic leading-relaxed mb-6">
                       *excludes travel/lodging for destination shoots.
                     </p>
                     
@@ -542,12 +551,12 @@ export function PricingEstimator() {
                         <div className={`w-10 h-10 rounded-full flex items-center justify-center transition-all duration-500 shadow-sm
                           ${isCompleted ? 'bg-obsidian text-white border-2 border-obsidian' : 
                             isActive ? 'bg-white text-obsidian border-2 border-warm-gray ring-4 ring-ivory' : 
-                            'bg-white text-charcoal/30 border border-warm-gray/50 hover:border-warm-gray'}
+                            'bg-white text-charcoal/90 border border-warm-gray/50 hover:border-warm-gray'}
                         `}>
                           {isCompleted ? <Check size={16} strokeWidth={2.5} /> : <span className="text-xs font-semibold font-mono tracking-tighter">0{index + 1}</span>}
                         </div>
                         <span className={`text-[8px] sm:text-[9px] uppercase tracking-[0.1em] sm:tracking-[0.15em] font-bold absolute -bottom-6 sm:-bottom-6 whitespace-nowrap transition-colors duration-300
-                          ${isActive || isCompleted ? 'text-obsidian' : 'text-charcoal/30'}
+                          ${isActive || isCompleted ? 'text-obsidian' : 'text-charcoal/90'}
                         `}>
                           {isActive ? s.title : <span className="hidden sm:inline">0{index + 1} {s.title}</span>}
                         </span>
@@ -570,13 +579,13 @@ export function PricingEstimator() {
                   >
                     <div className="mb-8">
                       <h3 className="text-xl md:text-2xl font-serif italic text-obsidian mb-2">Begin Your Story</h3>
-                      <p className="text-xs text-charcoal/50 uppercase tracking-widest font-semibold">Share your details</p>
+                      <p className="text-xs text-charcoal/80 uppercase tracking-widest font-semibold">Share your details</p>
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       {/* Name */}
                       <div className="flex flex-col">
-                        <label htmlFor="fullName" className="text-[10px] uppercase tracking-[0.15em] text-charcoal/50 mb-2 font-semibold">
+                        <label htmlFor="fullName" className="text-[10px] uppercase tracking-[0.15em] text-charcoal/80 mb-2 font-semibold">
                           Full Name *
                         </label>
                         <input
@@ -587,14 +596,14 @@ export function PricingEstimator() {
                           onChange={handleInputChange}
                           onBlur={handleBlur}
                           placeholder="Priya Sharma"
-                          className={`bg-transparent border-b ${errors.fullName ? 'border-red-400' : 'border-warm-gray focus:border-obsidian'} py-3 text-sm text-obsidian placeholder:text-charcoal/20 focus:outline-none transition-colors rounded-none`}
+                          className={`bg-transparent border-b ${errors.fullName ? 'border-red-400' : 'border-warm-gray focus:border-obsidian'} py-3 text-sm text-obsidian placeholder:text-charcoal/80 focus:outline-none transition-colors rounded-none`}
                         />
                         {errors.fullName && touched.fullName && <span className="text-[10px] text-red-500 mt-1">{errors.fullName}</span>}
                       </div>
 
                       {/* Email */}
                       <div className="flex flex-col">
-                        <label htmlFor="email" className="text-[10px] uppercase tracking-[0.15em] text-charcoal/50 mb-2 font-semibold">
+                        <label htmlFor="email" className="text-[10px] uppercase tracking-[0.15em] text-charcoal/80 mb-2 font-semibold">
                           Email Address *
                         </label>
                         <input
@@ -605,14 +614,14 @@ export function PricingEstimator() {
                           onChange={handleInputChange}
                           onBlur={handleBlur}
                           placeholder="priya@example.com"
-                          className={`bg-transparent border-b ${errors.email ? 'border-red-400' : 'border-warm-gray focus:border-obsidian'} py-3 text-sm text-obsidian placeholder:text-charcoal/20 focus:outline-none transition-colors rounded-none`}
+                          className={`bg-transparent border-b ${errors.email ? 'border-red-400' : 'border-warm-gray focus:border-obsidian'} py-3 text-sm text-obsidian placeholder:text-charcoal/80 focus:outline-none transition-colors rounded-none`}
                         />
                         {errors.email && touched.email && <span className="text-[10px] text-red-500 mt-1">{errors.email}</span>}
                       </div>
 
                       {/* Phone */}
                       <div className="flex flex-col">
-                        <label htmlFor="phone" className="text-[10px] uppercase tracking-[0.15em] text-charcoal/50 mb-2 font-semibold">
+                        <label htmlFor="phone" className="text-[10px] uppercase tracking-[0.15em] text-charcoal/80 mb-2 font-semibold">
                           Contact Number *
                         </label>
                         <input
@@ -623,14 +632,14 @@ export function PricingEstimator() {
                           onChange={handleInputChange}
                           onBlur={handleBlur}
                           placeholder="+91 98765 43210"
-                          className={`bg-transparent border-b ${errors.phone ? 'border-red-400' : 'border-warm-gray focus:border-obsidian'} py-3 text-sm text-obsidian placeholder:text-charcoal/20 focus:outline-none transition-colors rounded-none`}
+                          className={`bg-transparent border-b ${errors.phone ? 'border-red-400' : 'border-warm-gray focus:border-obsidian'} py-3 text-sm text-obsidian placeholder:text-charcoal/80 focus:outline-none transition-colors rounded-none`}
                         />
                         {errors.phone && touched.phone && <span className="text-[10px] text-red-500 mt-1">{errors.phone}</span>}
                       </div>
 
                       {/* Date */}
                       <div className="flex flex-col">
-                        <label htmlFor="eventDate" className="text-[10px] uppercase tracking-[0.15em] text-charcoal/50 mb-2 font-semibold">
+                        <label htmlFor="eventDate" className="text-[10px] uppercase tracking-[0.15em] text-charcoal/80 mb-2 font-semibold">
                           Celebration Date *
                         </label>
                         <input
@@ -660,7 +669,7 @@ export function PricingEstimator() {
                   >
                     <div className="bg-white/80 backdrop-blur-md rounded-2xl p-6 sm:p-10 shadow-[0_4px_20px_rgb(0,0,0,0.03)] border border-white">
                       <h3 className="text-xl md:text-2xl font-serif italic text-obsidian mb-8">
-                        <span className="font-sans not-italic text-sm text-charcoal/50 uppercase tracking-[0.2em] font-semibold block mb-2">Choose</span>
+                        <span className="font-sans not-italic text-sm text-charcoal/80 uppercase tracking-[0.2em] font-semibold block mb-2">Choose</span>
                         Format
                       </h3>
                       
@@ -682,7 +691,7 @@ export function PricingEstimator() {
                               }`}
                             >
                               <div className="flex justify-between items-center w-full mb-3">
-                                <span className="text-[8px] font-bold uppercase tracking-[0.2em] text-charcoal/40">
+                                <span className="text-[8px] font-bold uppercase tracking-[0.2em] text-charcoal/70">
                                   COLLECTION {numStr}
                                 </span>
                                 {isSelected && (
@@ -692,7 +701,7 @@ export function PricingEstimator() {
                               <span className="font-serif text-base font-bold text-obsidian mb-3">
                                 {evt.name}
                               </span>
-                              <span className="text-[11px] text-charcoal/50 leading-relaxed font-light mb-4 flex-grow">
+                              <span className="text-[11px] text-charcoal/80 leading-relaxed font-light mb-4 flex-grow">
                                 {evt.desc}
                               </span>
                               
@@ -712,12 +721,12 @@ export function PricingEstimator() {
                       <div className="bg-white/80 backdrop-blur-md rounded-2xl p-6 sm:p-10 shadow-[0_4px_20px_rgb(0,0,0,0.03)] border border-white">
                         <div className="flex justify-between items-end mb-8">
                           <h3 className="text-xl md:text-2xl font-serif italic text-obsidian">
-                            <span className="font-sans not-italic text-[10px] text-charcoal/50 uppercase tracking-[0.2em] font-bold block mb-2">Duration</span>
+                            <span className="font-sans not-italic text-[10px] text-charcoal/80 uppercase tracking-[0.2em] font-bold block mb-2">Duration</span>
                             Coverage <span className="font-bold font-serif not-italic">Timeline</span>
                           </h3>
                           <div className="bg-ivory px-4 py-2 rounded-full border border-warm-gray/50 flex items-center gap-2">
                             <span className="font-serif italic font-bold text-obsidian">{formData.duration}</span>
-                            <span className="text-[9px] uppercase tracking-widest font-bold text-charcoal/60">Days</span>
+                            <span className="text-[9px] uppercase tracking-widest font-bold text-charcoal/90">Days</span>
                           </div>
                         </div>
 
@@ -746,7 +755,7 @@ export function PricingEstimator() {
                             {/* Ticks */}
                             <div className="absolute top-6 left-0 right-0 flex justify-between px-1">
                               {[1, 2, 3, 4, 5].map(val => (
-                                <span key={val} className="text-[8px] uppercase tracking-widest text-charcoal/40 font-semibold cursor-pointer" onClick={() => setFormData(prev => ({ ...prev, duration: val }))}>
+                                <span key={val} className="text-[8px] uppercase tracking-widest text-charcoal/70 font-semibold cursor-pointer" onClick={() => setFormData(prev => ({ ...prev, duration: val }))}>
                                   {val === 1 ? 'SINGLE DAY' : val === 5 ? 'FIVE+ DAYS' : `${val === 2 ? 'TWO' : val === 3 ? 'THREE' : 'FOUR'} DAYS`}
                                 </span>
                               ))}
@@ -769,7 +778,7 @@ export function PricingEstimator() {
                   >
                     <div className="mb-8">
                       <h3 className="text-xl md:text-2xl font-serif italic text-obsidian mb-2">{steps[currentStep].title}</h3>
-                      <p className="text-xs text-charcoal/50 uppercase tracking-widest font-semibold">{steps[currentStep].subtitle}</p>
+                      <p className="text-xs text-charcoal/80 uppercase tracking-widest font-semibold">{steps[currentStep].subtitle}</p>
                     </div>
 
                     {currentStep === 2 ? (
@@ -790,7 +799,7 @@ export function PricingEstimator() {
                             >
                               <div>
                                 <span className="block font-serif text-sm font-bold text-obsidian mb-1">{srv.name}</span>
-                                <span className="block text-[10px] text-charcoal/50 font-light">{srv.desc}</span>
+                                <span className="block text-[10px] text-charcoal/80 font-light">{srv.desc}</span>
                               </div>
                               <div className={`w-5 h-5 rounded-full flex items-center justify-center border transition-all ${isSelected ? 'bg-obsidian border-obsidian text-white' : 'border-warm-gray/80 text-transparent'}`}>
                                 <Check size={12} strokeWidth={3} />
@@ -803,7 +812,7 @@ export function PricingEstimator() {
                       // STEP 4: LOGISTICS
                       <div className="space-y-8">
                         <div>
-                          <p className="text-[10px] uppercase tracking-[0.2em] font-semibold mb-4 text-charcoal/60">Location Logistics</p>
+                          <p className="text-[10px] uppercase tracking-[0.2em] font-semibold mb-4 text-charcoal/90">Location Logistics</p>
                           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                             {(Object.keys(PRICING.locations) as LocationType[]).map((locKey) => {
                               const loc = PRICING.locations[locKey];
@@ -823,7 +832,7 @@ export function PricingEstimator() {
                         </div>
 
                         <div>
-                          <label htmlFor="notes" className="text-[10px] uppercase tracking-[0.2em] font-semibold mb-3 block text-charcoal/60">Creative Vision Notes</label>
+                          <label htmlFor="notes" className="text-[10px] uppercase tracking-[0.2em] font-semibold mb-3 block text-charcoal/90">Creative Vision Notes</label>
                           <textarea
                             id="notes"
                             name="notes"
@@ -845,7 +854,7 @@ export function PricingEstimator() {
                 <button
                   type="button"
                   onClick={handlePrevStep}
-                  className={`flex items-center gap-2 text-[10px] uppercase tracking-widest font-bold text-charcoal/60 hover:text-obsidian transition-colors ${currentStep === 0 ? 'invisible' : 'visible'}`}
+                  className={`flex items-center gap-2 text-[10px] uppercase tracking-widest font-bold text-charcoal/90 hover:text-obsidian transition-colors ${currentStep === 0 ? 'invisible' : 'visible'}`}
                 >
                   <ArrowLeft size={14} /> Back
                 </button>
