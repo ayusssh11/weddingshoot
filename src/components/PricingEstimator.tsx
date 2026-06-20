@@ -346,7 +346,7 @@ export function PricingEstimator() {
   };
 
   return (
-    <section className="bg-ivory py-12 sm:py-16 md:py-24 relative overflow-hidden" id="estimator">
+    <section className="bg-ivory py-10 sm:py-12 md:py-16 relative overflow-hidden" id="estimator">
 
       {/* Stylesheet specifically for printing a clean branded invoice */}
       <style>{`
@@ -618,31 +618,48 @@ export function PricingEstimator() {
         <div className="absolute -bottom-32 -right-32 w-[500px] h-[500px] bg-plum/5 rounded-full blur-[120px] pointer-events-none -z-10"></div>
 
         {/* Section Header */}
-        <div className="text-center max-w-2xl mx-auto mb-10 sm:mb-16 px-2">
-          <span className="text-[10px] tracking-[0.35em] text-plum uppercase font-sans font-bold inline-block mb-3">
+        <div className="text-center max-w-2xl mx-auto mb-8 sm:mb-10 px-2 relative">
+          {/* Decorative flourish */}
+          <div className="flex items-center justify-center gap-4 mb-4">
+            <div className="h-px w-12 bg-gradient-to-r from-transparent to-plum/40"></div>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" className="text-orchid/60">
+              <path d="M12 2L14.5 9.5L22 12L14.5 14.5L12 22L9.5 14.5L2 12L9.5 9.5L12 2Z" fill="currentColor" />
+            </svg>
+            <div className="h-px w-12 bg-gradient-to-l from-transparent to-plum/40"></div>
+          </div>
+          <span className="text-[10px] tracking-[0.4em] text-plum uppercase font-sans font-bold inline-block mb-2 bg-plum/[0.06] px-4 py-1 rounded-full border border-plum/10">
             Legacy Commissions
           </span>
-          <h2 className="font-serif text-3xl sm:text-4xl md:text-5xl text-obsidian leading-tight">
+          <h2 className="font-serif text-2xl sm:text-3xl md:text-4xl text-obsidian leading-tight mt-2">
             Tailor Your Investment
           </h2>
-          <p className="text-charcoal/60 text-sm md:text-base font-light mt-4">
-            Build your personalized creative package. Select parameters below to calculate dynamic pricing estimates and design your custom coverage.
+          <p className="text-charcoal/55 text-xs md:text-sm font-light mt-2 max-w-lg mx-auto leading-relaxed">
+            Build your personalized creative package below.
           </p>
         </div>
 
         {/* Layout Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-start">
 
           {/* Left Column: Multi-Step Interactive Form */}
-          <div className="lg:col-span-7 bg-white rounded-[2rem] p-6 sm:p-8 md:p-12 border border-warm-gray/20 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.05)] relative overflow-hidden">
+          <div className="lg:col-span-7 bg-white rounded-2xl p-5 sm:p-6 md:p-8 border border-warm-gray/20 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.05)] relative overflow-hidden">
+
+            {/* Decorative corner accents */}
+            <div className="absolute top-0 left-0 w-24 h-24 pointer-events-none">
+              <div className="absolute top-4 left-4 w-8 h-px bg-gradient-to-r from-plum/30 to-transparent"></div>
+              <div className="absolute top-4 left-4 w-px h-8 bg-gradient-to-b from-plum/30 to-transparent"></div>
+            </div>
+            <div className="absolute top-0 right-0 w-24 h-24 pointer-events-none">
+              <div className="absolute top-4 right-4 w-8 h-px bg-gradient-to-l from-plum/30 to-transparent"></div>
+              <div className="absolute top-4 right-4 w-px h-8 bg-gradient-to-b from-plum/30 to-transparent"></div>
+            </div>
             
             {/* Form Progress Header */}
-            <div className="flex justify-between items-start sm:items-center mb-8 sm:mb-12 pb-8 border-b border-warm-gray/30 gap-2 sm:gap-0 overflow-x-auto hide-scrollbar" aria-label="Progress">
+            <div className="flex justify-between items-start sm:items-center mb-5 sm:mb-6 pb-5 border-b border-warm-gray/20 gap-2 sm:gap-0 overflow-x-auto hide-scrollbar" aria-label="Progress">
               {steps.map((s, index) => (
                 <div
                   key={index}
-                  className={`flex flex-col items-center flex-1 text-center relative ${index < steps.length - 1 ? "after:content-[''] after:h-[1px] after:bg-warm-gray/50 after:w-full after:absolute after:top-4 after:left-1/2 after:-z-10" : ""
-                    }`}
+                  className={`flex flex-col items-center flex-1 text-center relative ${index < steps.length - 1 ? "after:content-[''] after:h-[2px] after:w-full after:absolute after:top-[15px] after:left-1/2 after:-z-10 after:transition-colors after:duration-500" : ""} ${index < steps.length - 1 && currentStep > index ? 'after:bg-gradient-to-r after:from-plum after:to-orchid/60' : index < steps.length - 1 ? 'after:bg-warm-gray/30' : ''}`}
                   aria-current={currentStep === index ? "step" : undefined}
                 >
                   <button
@@ -674,19 +691,21 @@ export function PricingEstimator() {
                         }
                       }
                     }}
-                    className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold transition-all duration-500 z-10 relative ${
+                    className={`w-8 h-8 rounded-full flex items-center justify-center text-[10px] font-bold transition-all duration-500 z-10 relative ${
                       currentStep === index 
-                        ? 'bg-gradient-to-br from-plum to-orchid text-white shadow-[0_8px_20px_rgba(218,112,214,0.3)] ring-4 ring-orchid/10 scale-110' 
+                        ? 'bg-gradient-to-br from-plum to-orchid text-white shadow-[0_6px_24px_rgba(218,112,214,0.35)] ring-[3px] ring-orchid/15 scale-110' 
                         : currentStep > index 
-                          ? 'bg-obsidian text-white shadow-md' 
-                          : 'border-2 border-warm-gray/50 bg-white text-charcoal/40 hover:border-charcoal/30 hover:text-charcoal/60'
+                          ? 'bg-gradient-to-br from-obsidian to-charcoal text-white shadow-md' 
+                          : 'border-[1.5px] border-warm-gray/50 bg-ivory/50 text-charcoal/35 hover:border-plum/30 hover:text-charcoal/60 hover:bg-white'
                     }`}
                   >
-                    {currentStep > index ? <Check size={14} /> : index + 1}
+                    {currentStep > index ? <Check size={12} strokeWidth={3} /> : index + 1}
                   </button>
-                  <span className={`text-[10px] tracking-wider uppercase font-semibold mt-2 hidden sm:block ${currentStep === index ? 'text-plum' : 'text-charcoal/60'}`}>
-                    {s.title}
-                  </span>
+                  <div className="mt-1.5 hidden sm:block">
+                    <span className={`text-[9px] tracking-wider uppercase font-bold block transition-colors duration-300 ${currentStep === index ? 'text-plum' : currentStep > index ? 'text-obsidian/70' : 'text-charcoal/40'}`}>
+                      {s.title}
+                    </span>
+                  </div>
                 </div>
               ))}
             </div>
@@ -763,21 +782,33 @@ export function PricingEstimator() {
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: -20 }}
                   transition={{ duration: 0.4 }}
-                  className="space-y-6"
+                  className="space-y-5"
                 >
-                  <div>
-                    <h3 className="text-lg font-serif text-charcoal mb-2">Visual Legacy Inquiry Details</h3>
-                    <p className="text-xs text-charcoal/50 mb-6 font-light">
-                      Please enter your details below to unlock the dynamic pricing calculator and crew recommendation planner.
-                    </p>
+                  {/* Step header with decorative accent */}
+                  <div className="relative">
+                    <div className="flex items-center gap-2.5 mb-1">
+                      <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-plum/10 to-orchid/10 flex items-center justify-center border border-plum/10">
+                        <User size={14} className="text-plum" />
+                      </div>
+                      <div>
+                        <h3 className="text-sm font-serif text-charcoal leading-tight">Begin Your Legacy</h3>
+                        <p className="text-[10px] text-charcoal/45 font-light">
+                          Share your details to unlock the pricing studio
+                        </p>
+                      </div>
+                    </div>
                   </div>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-5 gap-y-4">
                     {/* Name */}
-                    <div className="flex flex-col relative">
-                      <label htmlFor="fullName" className="text-xs uppercase tracking-widest text-charcoal/60 mb-2 font-medium">Full Name *</label>
+                    <div className="flex flex-col relative group">
+                      <label htmlFor="fullName" className="text-[10px] uppercase tracking-[0.15em] text-charcoal/50 mb-1.5 font-semibold flex items-center gap-1.5">
+                        <span className="w-1 h-1 rounded-full bg-plum/40"></span>
+                        Full Name <span className="text-orchid">*</span>
+                      </label>
                       <div className="relative">
-                        <User className="absolute left-3 top-3.5 w-4.5 h-4.5 text-charcoal/30" />
+                        <div className="absolute left-0 top-0 bottom-0 w-[3px] rounded-full bg-gradient-to-b from-plum/0 via-plum/0 to-plum/0 group-focus-within:from-plum group-focus-within:via-orchid group-focus-within:to-plum/30 transition-all duration-500"></div>
+                        <User className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-charcoal/25 group-focus-within:text-plum transition-colors duration-300" />
                         <input
                           type="text"
                           id="fullName"
@@ -789,22 +820,26 @@ export function PricingEstimator() {
                           onBlur={handleBlur}
                           placeholder="Your full name"
                           aria-describedby={errors.fullName ? "fullName-error" : undefined}
-                          className={`w-full bg-ivory/50 border rounded-lg py-3 pl-10 pr-4 text-sm text-charcoal focus:outline-none focus:border-plum focus:ring-1 focus:ring-plum/30 transition-colors ${errors.fullName ? 'border-red-400 focus:border-red-400 focus:ring-red-100' : 'border-warm-gray/60'
+                          className={`w-full bg-ivory/60 border rounded-lg py-2.5 pl-10 pr-3 text-sm text-charcoal placeholder:text-charcoal/25 focus:outline-none focus:border-plum/50 focus:ring-2 focus:ring-plum/10 focus:bg-white transition-all duration-300 ${errors.fullName ? 'border-red-300 focus:border-red-400 focus:ring-red-100 bg-red-50/30' : 'border-warm-gray/40 hover:border-warm-gray/70'
                             }`}
                         />
                       </div>
                       {errors.fullName && touched.fullName && (
-                        <span id="fullName-error" className="text-[10px] text-red-500 font-medium mt-1.5 flex items-center gap-1">
+                        <span id="fullName-error" className="text-[10px] text-red-500 font-medium mt-2 flex items-center gap-1 pl-1">
                           <AlertCircle size={10} /> {errors.fullName}
                         </span>
                       )}
                     </div>
 
                     {/* Email */}
-                    <div className="flex flex-col relative">
-                      <label htmlFor="email" className="text-xs uppercase tracking-widest text-charcoal/60 mb-2 font-medium">Email Address *</label>
+                    <div className="flex flex-col relative group">
+                      <label htmlFor="email" className="text-[10px] uppercase tracking-[0.15em] text-charcoal/50 mb-1.5 font-semibold flex items-center gap-1.5">
+                        <span className="w-1 h-1 rounded-full bg-plum/40"></span>
+                        Email Address <span className="text-orchid">*</span>
+                      </label>
                       <div className="relative">
-                        <Mail className="absolute left-3 top-3.5 w-4.5 h-4.5 text-charcoal/30" />
+                        <div className="absolute left-0 top-0 bottom-0 w-[3px] rounded-full bg-gradient-to-b from-plum/0 via-plum/0 to-plum/0 group-focus-within:from-plum group-focus-within:via-orchid group-focus-within:to-plum/30 transition-all duration-500"></div>
+                        <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-charcoal/25 group-focus-within:text-plum transition-colors duration-300" />
                         <input
                           type="email"
                           id="email"
@@ -816,22 +851,26 @@ export function PricingEstimator() {
                           onBlur={handleBlur}
                           placeholder="your.email@domain.com"
                           aria-describedby={errors.email ? "email-error" : undefined}
-                          className={`w-full bg-ivory/50 border rounded-lg py-3 pl-10 pr-4 text-sm text-charcoal focus:outline-none focus:border-plum focus:ring-1 focus:ring-plum/30 transition-colors ${errors.email ? 'border-red-400 focus:border-red-400 focus:ring-red-100' : 'border-warm-gray/60'
+                          className={`w-full bg-ivory/60 border rounded-lg py-2.5 pl-10 pr-3 text-sm text-charcoal placeholder:text-charcoal/25 focus:outline-none focus:border-plum/50 focus:ring-2 focus:ring-plum/10 focus:bg-white transition-all duration-300 ${errors.email ? 'border-red-300 focus:border-red-400 focus:ring-red-100 bg-red-50/30' : 'border-warm-gray/40 hover:border-warm-gray/70'
                             }`}
                         />
                       </div>
                       {errors.email && touched.email && (
-                        <span id="email-error" className="text-[10px] text-red-500 font-medium mt-1.5 flex items-center gap-1">
+                        <span id="email-error" className="text-[10px] text-red-500 font-medium mt-2 flex items-center gap-1 pl-1">
                           <AlertCircle size={10} /> {errors.email}
                         </span>
                       )}
                     </div>
 
                     {/* Phone */}
-                    <div className="flex flex-col relative">
-                      <label htmlFor="phone" className="text-xs uppercase tracking-widest text-charcoal/60 mb-2 font-medium">Contact Number *</label>
+                    <div className="flex flex-col relative group">
+                      <label htmlFor="phone" className="text-[10px] uppercase tracking-[0.15em] text-charcoal/50 mb-1.5 font-semibold flex items-center gap-1.5">
+                        <span className="w-1 h-1 rounded-full bg-plum/40"></span>
+                        Contact Number <span className="text-orchid">*</span>
+                      </label>
                       <div className="relative">
-                        <Phone className="absolute left-3 top-3.5 w-4.5 h-4.5 text-charcoal/30" />
+                        <div className="absolute left-0 top-0 bottom-0 w-[3px] rounded-full bg-gradient-to-b from-plum/0 via-plum/0 to-plum/0 group-focus-within:from-plum group-focus-within:via-orchid group-focus-within:to-plum/30 transition-all duration-500"></div>
+                        <Phone className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-charcoal/25 group-focus-within:text-plum transition-colors duration-300" />
                         <input
                           type="tel"
                           id="phone"
@@ -844,22 +883,26 @@ export function PricingEstimator() {
                           onBlur={handleBlur}
                           placeholder="+91 XXXXX XXXXX"
                           aria-describedby={errors.phone ? "phone-error" : undefined}
-                          className={`w-full bg-ivory/50 border rounded-lg py-3 pl-10 pr-4 text-sm text-charcoal focus:outline-none focus:border-plum focus:ring-1 focus:ring-plum/30 transition-colors ${errors.phone ? 'border-red-400 focus:border-red-400 focus:ring-red-100' : 'border-warm-gray/60'
+                          className={`w-full bg-ivory/60 border rounded-lg py-2.5 pl-10 pr-3 text-sm text-charcoal placeholder:text-charcoal/25 focus:outline-none focus:border-plum/50 focus:ring-2 focus:ring-plum/10 focus:bg-white transition-all duration-300 ${errors.phone ? 'border-red-300 focus:border-red-400 focus:ring-red-100 bg-red-50/30' : 'border-warm-gray/40 hover:border-warm-gray/70'
                             }`}
                         />
                       </div>
                       {errors.phone && touched.phone && (
-                        <span id="phone-error" className="text-[10px] text-red-500 font-medium mt-1.5 flex items-center gap-1">
+                        <span id="phone-error" className="text-[10px] text-red-500 font-medium mt-2 flex items-center gap-1 pl-1">
                           <AlertCircle size={10} /> {errors.phone}
                         </span>
                       )}
                     </div>
 
                     {/* Target Date */}
-                    <div className="flex flex-col relative">
-                      <label htmlFor="eventDate" className="text-xs uppercase tracking-widest text-charcoal/60 mb-2 font-medium">Celebration Date *</label>
+                    <div className="flex flex-col relative group">
+                      <label htmlFor="eventDate" className="text-[10px] uppercase tracking-[0.15em] text-charcoal/50 mb-1.5 font-semibold flex items-center gap-1.5">
+                        <span className="w-1 h-1 rounded-full bg-plum/40"></span>
+                        Celebration Date <span className="text-orchid">*</span>
+                      </label>
                       <div className="relative">
-                        <Calendar className="absolute left-3 top-3.5 w-4.5 h-4.5 text-charcoal/30" />
+                        <div className="absolute left-0 top-0 bottom-0 w-[3px] rounded-full bg-gradient-to-b from-plum/0 via-plum/0 to-plum/0 group-focus-within:from-plum group-focus-within:via-orchid group-focus-within:to-plum/30 transition-all duration-500"></div>
+                        <Calendar className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-charcoal/25 group-focus-within:text-plum transition-colors duration-300" />
                         <input
                           type="date"
                           id="eventDate"
@@ -869,15 +912,33 @@ export function PricingEstimator() {
                           onChange={handleInputChange}
                           onBlur={handleBlur}
                           aria-describedby={errors.eventDate ? "eventDate-error" : undefined}
-                          className={`w-full bg-ivory/50 border rounded-lg py-3 pl-10 pr-4 text-sm text-charcoal focus:outline-none focus:border-plum focus:ring-1 focus:ring-plum/30 transition-colors ${errors.eventDate ? 'border-red-400 focus:border-red-400 focus:ring-red-100' : 'border-warm-gray/60'
+                          className={`w-full bg-ivory/60 border rounded-lg py-2.5 pl-10 pr-3 text-sm text-charcoal placeholder:text-charcoal/25 focus:outline-none focus:border-plum/50 focus:ring-2 focus:ring-plum/10 focus:bg-white transition-all duration-300 ${errors.eventDate ? 'border-red-300 focus:border-red-400 focus:ring-red-100 bg-red-50/30' : 'border-warm-gray/40 hover:border-warm-gray/70'
                             }`}
                         />
                       </div>
                       {errors.eventDate && touched.eventDate && (
-                        <span id="eventDate-error" className="text-[10px] text-red-500 font-medium mt-1.5 flex items-center gap-1">
+                        <span id="eventDate-error" className="text-[10px] text-red-500 font-medium mt-2 flex items-center gap-1 pl-1">
                           <AlertCircle size={10} /> {errors.eventDate}
                         </span>
                       )}
+                    </div>
+                  </div>
+
+                  {/* Trust indicators */}
+                  <div className="flex items-center justify-center gap-6 pt-2">
+                    <div className="flex items-center gap-1.5 text-[10px] text-charcoal/35">
+                      <Lock size={10} className="text-plum/40" />
+                      <span>SSL Encrypted</span>
+                    </div>
+                    <div className="w-px h-3 bg-warm-gray/40"></div>
+                    <div className="flex items-center gap-1.5 text-[10px] text-charcoal/35">
+                      <CheckCircle2 size={10} className="text-plum/40" />
+                      <span>No Spam, Ever</span>
+                    </div>
+                    <div className="w-px h-3 bg-warm-gray/40"></div>
+                    <div className="flex items-center gap-1.5 text-[10px] text-charcoal/35">
+                      <CheckCircle2 size={10} className="text-plum/40" />
+                      <span>Instant Quote</span>
                     </div>
                   </div>
                 </motion.div>
@@ -890,11 +951,19 @@ export function PricingEstimator() {
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: -20 }}
                   transition={{ duration: 0.4 }}
-                  className="space-y-8"
+                  className="space-y-5"
                 >
                   <div>
-                    <h3 className="text-lg font-serif text-charcoal mb-4">Choose Celebration Format</h3>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div className="flex items-center gap-2.5 mb-4">
+                      <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-plum/10 to-orchid/10 flex items-center justify-center border border-plum/10">
+                        <Calendar size={14} className="text-plum" />
+                      </div>
+                      <div>
+                        <h3 className="text-sm font-serif text-charcoal leading-tight">Choose Celebration Format</h3>
+                        <p className="text-[10px] text-charcoal/45 font-light">Select the type of event you're planning</p>
+                      </div>
+                    </div>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                       {(Object.keys(PRICING.events) as EventType[]).map((type) => {
                         const evt = PRICING.events[type];
                         const isSelected = formData.eventType === type;
@@ -903,24 +972,24 @@ export function PricingEstimator() {
                             key={type}
                             type="button"
                             onClick={() => setFormData(prev => ({ ...prev, eventType: type }))}
-                            className={`flex flex-col p-6 rounded-2xl border-2 text-left transition-all duration-300 relative group cursor-pointer ${
+                            className={`flex flex-col p-3.5 rounded-xl border-2 text-left transition-all duration-300 relative group cursor-pointer ${
                               isSelected 
-                                ? 'border-plum bg-plum/[0.02] shadow-[0_8px_30px_rgba(139,51,127,0.12)] -translate-y-1' 
-                                : 'border-warm-gray/30 bg-white hover:border-plum/30 hover:shadow-md hover:-translate-y-1'
+                                ? 'border-plum/70 bg-gradient-to-br from-plum/[0.04] to-orchid/[0.02] shadow-[0_4px_16px_rgba(139,51,127,0.1)]' 
+                                : 'border-warm-gray/30 bg-white hover:border-plum/20 hover:shadow-sm'
                             }`}
                           >
                             {isSelected && (
-                              <div className="absolute right-4 top-4 w-5 h-5 rounded-full bg-plum text-white flex items-center justify-center shadow-md">
-                                <Check size={12} />
+                              <div className="absolute right-3 top-3 w-5 h-5 rounded-full bg-gradient-to-br from-plum to-orchid text-white flex items-center justify-center shadow-md">
+                                <Check size={10} strokeWidth={3} />
                               </div>
                             )}
-                            <span className={`text-xs font-semibold uppercase tracking-wider mb-2 transition-colors duration-300 ${isSelected ? 'text-plum' : 'text-charcoal/50'}`}>
+                            <span className={`text-[9px] font-bold uppercase tracking-[0.12em] mb-1 transition-colors duration-300 ${isSelected ? 'text-plum' : 'text-charcoal/40'}`}>
                               {type === 'wedding' ? '01 / WEDDING' : type === 'prewedding' ? '02 / PRE-WEDDING' : type === 'engagement' ? '03 / ROKA' : '04 / MILESTONE'}
                             </span>
-                            <span className="font-serif text-base font-bold text-obsidian mb-2">
+                            <span className="font-serif text-sm font-bold text-obsidian mb-0.5">
                               {evt.name}
                             </span>
-                            <span className="text-xs text-charcoal/60 leading-relaxed font-light">
+                            <span className="text-[10px] text-charcoal/55 leading-snug font-light line-clamp-2">
                               {evt.desc}
                             </span>
                           </button>
@@ -931,13 +1000,14 @@ export function PricingEstimator() {
 
                   {/* Shoot Duration Slider */}
                   {!PRICING.events[formData.eventType].isFlat && (
-                    <div className="space-y-4 pt-4 border-t border-warm-gray/30">
+                    <div className="space-y-3 pt-4 border-t border-warm-gray/20">
                       <div className="flex justify-between items-center">
-                        <label htmlFor="duration-slider" className="text-sm font-semibold tracking-wider text-charcoal/70 uppercase">
+                        <label htmlFor="duration-slider" className="text-[10px] font-bold tracking-[0.15em] text-charcoal/60 uppercase flex items-center gap-1.5">
+                          <span className="w-1 h-1 rounded-full bg-plum/40"></span>
                           Shoot Duration
                         </label>
-                        <span className="font-serif italic font-semibold text-lg text-plum">
-                          {formData.duration} Day{formData.duration > 1 ? 's' : ''} Coverage
+                        <span className="font-mono text-sm font-bold text-plum bg-plum/[0.06] px-3 py-1 rounded-lg border border-plum/10">
+                          {formData.duration} Day{formData.duration > 1 ? 's' : ''}
                         </span>
                       </div>
                       <div className="relative pt-2">
@@ -948,9 +1018,9 @@ export function PricingEstimator() {
                           max="5"
                           value={formData.duration}
                           onChange={(e) => setFormData(prev => ({ ...prev, duration: parseInt(e.target.value) }))}
-                          className="w-full h-1.5 bg-warm-gray rounded-lg appearance-none cursor-pointer accent-plum"
+                          className="w-full h-1.5 bg-warm-gray/50 rounded-lg appearance-none cursor-pointer accent-plum"
                         />
-                        <div className="flex justify-between text-xs text-charcoal/40 font-mono mt-2 px-1">
+                        <div className="flex justify-between text-[10px] text-charcoal/35 font-mono mt-2.5 px-1">
                           <span>1 Day</span>
                           <span>2 Days</span>
                           <span>3 Days</span>
@@ -973,10 +1043,15 @@ export function PricingEstimator() {
                   className="space-y-6"
                 >
                   <div>
-                    <h3 className="text-lg font-serif text-charcoal mb-2">Select Creative Services</h3>
-                    <p className="text-xs text-charcoal/50 mb-6 font-light">
-                      Customize crew additions to craft the perfect frame composition. Base Candid Photography is included.
-                    </p>
+                    <div className="flex items-center gap-3 mb-5">
+                      <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-plum/10 to-orchid/10 flex items-center justify-center border border-plum/10">
+                        <CheckCircle2 size={18} className="text-plum" />
+                      </div>
+                      <div>
+                        <h3 className="text-lg font-serif text-charcoal leading-tight">Select Creative Services</h3>
+                        <p className="text-[11px] text-charcoal/45 font-light">Base Candid Photography is always included</p>
+                      </div>
+                    </div>
 
                     <div className="space-y-4">
                       {Object.entries(PRICING.services).map(([key, service]) => {
@@ -1075,10 +1150,15 @@ export function PricingEstimator() {
                 >
                   {/* Guest scale */}
                   <div>
-                    <h3 className="text-lg font-serif text-charcoal mb-2">Guest Scale & Crew Staffing</h3>
-                    <p className="text-xs text-charcoal/50 mb-6 font-light">
-                      Event size dictates coverage depth. Larger weddings require additional creative professionals for comprehensive coverage.
-                    </p>
+                    <div className="flex items-center gap-3 mb-5">
+                      <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-plum/10 to-orchid/10 flex items-center justify-center border border-plum/10">
+                        <User size={18} className="text-plum" />
+                      </div>
+                      <div>
+                        <h3 className="text-lg font-serif text-charcoal leading-tight">Guest Scale & Crew Staffing</h3>
+                        <p className="text-[11px] text-charcoal/45 font-light">Larger events require additional creative professionals</p>
+                      </div>
+                    </div>
 
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                       {(Object.keys(PRICING.scale) as ScaleType[]).map((scKey) => {
@@ -1111,10 +1191,15 @@ export function PricingEstimator() {
 
                   {/* Destination Location */}
                   <div className="pt-6 border-t border-warm-gray/30">
-                    <h3 className="text-lg font-serif text-charcoal mb-2">Celebration Destination</h3>
-                    <p className="text-xs text-charcoal/50 mb-6 font-light">
-                      Travel logistics, crew freight, and standard allowances mapped to your venue distance.
-                    </p>
+                    <div className="flex items-center gap-3 mb-5">
+                      <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-plum/10 to-orchid/10 flex items-center justify-center border border-plum/10">
+                        <ArrowRight size={18} className="text-plum" />
+                      </div>
+                      <div>
+                        <h3 className="text-lg font-serif text-charcoal leading-tight">Celebration Destination</h3>
+                        <p className="text-[11px] text-charcoal/45 font-light">Logistics mapped to your venue distance</p>
+                      </div>
+                    </div>
 
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                       {(Object.keys(PRICING.locations) as LocationType[]).map((locKey) => {
@@ -1143,48 +1228,54 @@ export function PricingEstimator() {
                   </div>
 
                   {/* Notes */}
-                  <div className="pt-6 border-t border-warm-gray/30 flex flex-col relative">
-                    <label htmlFor="notes" className="text-xs uppercase tracking-widest text-charcoal/60 mb-2 font-medium">Creative Vision / Special Notes</label>
-                    <textarea
-                      id="notes"
-                      name="notes"
-                      rows={3}
-                      value={formData.notes}
-                      onChange={handleInputChange}
-                      placeholder="Tell us about the dream locations, theme, or custom scheduling setups..."
-                      className="w-full bg-ivory/50 border border-warm-gray/60 rounded-lg p-4 text-sm text-charcoal focus:outline-none focus:border-plum focus:ring-1 focus:ring-plum/30 transition-colors resize-none"
-                    />
+                  <div className="pt-6 border-t border-warm-gray/20 flex flex-col relative group">
+                    <label htmlFor="notes" className="text-[10px] uppercase tracking-[0.2em] text-charcoal/50 mb-2.5 font-semibold flex items-center gap-1.5">
+                      <span className="w-1 h-1 rounded-full bg-plum/40"></span>
+                      Creative Vision / Special Notes
+                    </label>
+                    <div className="relative">
+                      <div className="absolute left-0 top-0 bottom-0 w-[3px] rounded-full bg-gradient-to-b from-plum/0 via-plum/0 to-plum/0 group-focus-within:from-plum group-focus-within:via-orchid group-focus-within:to-plum/30 transition-all duration-500"></div>
+                      <textarea
+                        id="notes"
+                        name="notes"
+                        rows={3}
+                        value={formData.notes}
+                        onChange={handleInputChange}
+                        placeholder="Tell us about the dream locations, theme, or custom scheduling setups..."
+                        className="w-full bg-ivory/60 border border-warm-gray/40 rounded-xl p-4 pl-4 text-sm text-charcoal placeholder:text-charcoal/25 focus:outline-none focus:border-plum/50 focus:ring-2 focus:ring-plum/10 focus:bg-white transition-all duration-300 resize-none hover:border-warm-gray/70"
+                      />
+                    </div>
                   </div>
                 </motion.div>
               )}
 
               {/* Navigation Action Panel */}
-              <div className="flex flex-col-reverse sm:flex-row justify-between items-stretch sm:items-center gap-4 sm:gap-0 pt-8 border-t border-warm-gray/30">
+              <div className="flex flex-col-reverse sm:flex-row justify-between items-stretch sm:items-center gap-3 sm:gap-0 pt-5 border-t border-warm-gray/20">
                 <button
                   type="button"
                   onClick={handlePrevStep}
-                  className={`inline-flex items-center justify-center sm:justify-start gap-2 text-xs font-semibold uppercase tracking-wider text-charcoal/70 hover:text-plum py-3 sm:py-0 transition-colors cursor-pointer ${currentStep === 0 ? 'hidden sm:invisible sm:flex sm:pointer-events-none' : 'flex'
+                  className={`inline-flex items-center justify-center sm:justify-start gap-2 text-[10px] font-bold uppercase tracking-[0.15em] text-charcoal/50 hover:text-plum py-2 sm:py-0 transition-all duration-300 cursor-pointer group ${currentStep === 0 ? 'hidden sm:invisible sm:flex sm:pointer-events-none' : 'flex'
                     }`}
                 >
-                  <ArrowLeft size={14} /> Back
+                  <ArrowLeft size={12} className="group-hover:-translate-x-0.5 transition-transform duration-300" /> Back
                 </button>
 
                 {currentStep < steps.length - 1 ? (
                   <button
                     type="button"
                     onClick={handleNextStep}
-                    className="inline-flex justify-center items-center gap-3 bg-obsidian hover:bg-plum text-white px-8 py-4 rounded-full text-xs font-bold uppercase tracking-widest transition-all duration-300 shadow-xl hover:shadow-[0_10px_30px_rgba(139,51,127,0.3)] hover:-translate-y-1 cursor-pointer w-full sm:w-auto"
+                    className="inline-flex justify-center items-center gap-3 bg-obsidian hover:bg-gradient-to-r hover:from-plum hover:to-orchid text-white px-6 py-3 rounded-full text-[10px] font-bold uppercase tracking-[0.2em] transition-all duration-400 shadow-xl hover:shadow-[0_10px_30px_rgba(139,51,127,0.3)] hover:-translate-y-0.5 cursor-pointer w-full sm:w-auto group"
                   >
-                    {currentStep > 0 && <span className="mr-3 border-r border-white/20 pr-4">{formatCurrency(pricingSummary.grandTotal)}</span>}
-                    Next Step <ArrowRight size={16} />
+                    {currentStep > 0 && <span className="mr-2 border-r border-white/15 pr-3 font-mono text-[11px]">{formatCurrency(pricingSummary.grandTotal)}</span>}
+                    Next Step <ArrowRight size={13} className="group-hover:translate-x-0.5 transition-transform duration-300" />
                   </button>
                 ) : (
                   <button
                     type="submit"
                     disabled={isSubmitting}
-                    className="inline-flex justify-center items-center gap-2 bg-gradient-to-r from-plum to-orchid text-white px-8 py-4 rounded-full text-xs font-semibold uppercase tracking-widest transition-all duration-500 shadow-lg hover:shadow-plum/30 hover:-translate-y-0.5 disabled:opacity-50 disabled:hover:translate-y-0 cursor-pointer w-full sm:w-auto"
+                    className="inline-flex justify-center items-center gap-2 bg-gradient-to-r from-plum to-orchid text-white px-6 py-3 rounded-full text-[10px] font-bold uppercase tracking-[0.2em] transition-all duration-500 shadow-lg hover:shadow-[0_12px_28px_rgba(139,51,127,0.3)] hover:-translate-y-0.5 disabled:opacity-50 disabled:hover:translate-y-0 cursor-pointer w-full sm:w-auto"
                   >
-                    {isSubmitting ? 'Submitting...' : 'Initiate Inquiry'}
+                    {isSubmitting ? 'Submitting...' : 'Submit Inquiry'}
                   </button>
                 )}
               </div>
@@ -1192,8 +1283,8 @@ export function PricingEstimator() {
           </div>
 
           {/* Right Column: Live Estimate Summary Card */}
-          <div className="lg:col-span-5 lg:sticky lg:top-28 mt-8 lg:mt-0">
-            <div className="bg-obsidian text-white rounded-[2rem] p-8 md:p-10 border border-white/5 shadow-2xl relative overflow-hidden ring-1 ring-white/10">
+          <div className="lg:col-span-5 lg:sticky lg:top-24 mt-6 lg:mt-0">
+            <div className="bg-gradient-to-br from-[#0f0a14] via-obsidian to-[#1a1025] text-white rounded-2xl p-6 md:p-7 border border-white/[0.08] shadow-[0_30px_80px_-20px_rgba(139,51,127,0.25)] relative overflow-hidden">
               {/* Lock Overlay when on Step 1 (currentStep === 0) */}
               <AnimatePresence>
                 {currentStep === 0 && (
@@ -1201,83 +1292,98 @@ export function PricingEstimator() {
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
-                    className="absolute inset-0 bg-obsidian/90 backdrop-blur-md z-20 flex flex-col items-center justify-center text-center p-8 select-none"
+                    className="absolute inset-0 bg-obsidian/95 backdrop-blur-xl z-20 flex flex-col items-center justify-center text-center p-6 select-none"
                   >
-                    <div className="w-16 h-16 rounded-full bg-white/5 flex items-center justify-center text-orchid mb-6 border border-white/10 shadow-[0_0_20px_rgba(218,112,214,0.15)]">
-                      <Lock size={24} className="text-orchid animate-pulse" />
+                    <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-plum/20 to-orchid/10 flex items-center justify-center text-orchid mb-5 border border-orchid/20 shadow-[0_0_30px_rgba(218,112,214,0.2)]">
+                      <Lock size={22} className="text-orchid animate-pulse" />
                     </div>
-                    <h4 className="font-serif text-xl text-white tracking-wide mb-3">
+                    <h4 className="font-serif text-lg text-white tracking-wide mb-2">
                       Calculator Locked
                     </h4>
-                    <p className="text-xs text-white/50 max-w-[260px] leading-relaxed font-light font-sans">
-                      Please enter your contact and event details in the inquiry form to unlock the investment estimator and custom package builder.
+                    <p className="text-[11px] text-white/45 max-w-[240px] leading-relaxed font-light font-sans">
+                      Enter your details to unlock the investment estimator.
                     </p>
                   </motion.div>
                 )}
               </AnimatePresence>
 
-              {/* Artistic top border glow */}
-              <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-plum via-orchid to-transparent"></div>
+              {/* Ambient glow effects */}
+              <div className="absolute -top-20 -right-20 w-40 h-40 bg-plum/15 rounded-full blur-[60px] pointer-events-none"></div>
+              <div className="absolute -bottom-16 -left-16 w-32 h-32 bg-orchid/10 rounded-full blur-[50px] pointer-events-none"></div>
 
-              <div className="flex justify-between items-center mb-6">
-                <h3 className="font-serif text-lg md:text-xl tracking-wide text-white/90">
-                  Investment Summary
-                </h3>
-                <span className="font-mono text-[10px] tracking-widest bg-white/10 text-white/60 px-2 py-0.5 rounded">
+              {/* Shimmer top border */}
+              <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-orchid to-transparent opacity-80"></div>
+
+              {/* Header */}
+              <div className="flex justify-between items-center mb-5">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-plum/30 to-orchid/20 flex items-center justify-center border border-white/10">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" className="text-orchid">
+                      <path d="M12 2L14.5 9.5L22 12L14.5 14.5L12 22L9.5 14.5L2 12L9.5 9.5L12 2Z" fill="currentColor" />
+                    </svg>
+                  </div>
+                  <h3 className="font-serif text-base tracking-wide text-white/95">
+                    Investment Summary
+                  </h3>
+                </div>
+                <span className="font-mono text-[9px] tracking-widest bg-white/[0.07] text-orchid/70 px-2 py-0.5 rounded-md border border-white/[0.06]">
                   {quoteId}
                 </span>
               </div>
 
               {/* Package Details Itemized list */}
-              <div className="space-y-4 mb-6 border-b border-white/10 pb-6 text-xs text-white/70">
+              <div className="space-y-2.5 mb-5 border-b border-white/[0.07] pb-5 text-[11px] text-white/70">
 
                 {/* Event Base item */}
-                <div className="flex justify-between items-start gap-4">
-                  <div>
-                    <span className="font-semibold block text-white">
-                      {PRICING.events[formData.eventType].name}
-                    </span>
-                    <span className="text-white/40 block mt-0.5">
-                      {PRICING.events[formData.eventType].isFlat ? 'Flat rate' : `${formData.duration} Day(s) coverage`}
-                    </span>
+                <div className="flex justify-between items-start gap-3">
+                  <div className="flex items-start gap-2">
+                    <span className="w-1.5 h-1.5 rounded-full bg-gradient-to-br from-plum to-orchid mt-1.5 shrink-0"></span>
+                    <div>
+                      <span className="font-semibold block text-white text-xs">
+                        {PRICING.events[formData.eventType].name}
+                      </span>
+                      <span className="text-white/35 block text-[10px]">
+                        {PRICING.events[formData.eventType].isFlat ? 'Flat rate' : `${formData.duration} Day(s) coverage`}
+                      </span>
+                    </div>
                   </div>
-                  <span className="font-mono font-semibold text-white">
+                  <span className="font-mono font-semibold text-white text-xs">
                     {formatCurrency(pricingSummary.basePriceTotal)}
                   </span>
                 </div>
 
                 {/* Selected services list */}
                 {Object.entries(formData.services).some(([_, val]) => val) && (
-                  <div className="space-y-2 pt-2 border-t border-white/5">
-                    <span className="text-[10px] uppercase tracking-wider text-white/30 block font-bold">Crew Additions</span>
+                  <div className="space-y-1.5 pt-2.5 border-t border-white/[0.05]">
+                    <span className="text-[9px] uppercase tracking-[0.15em] text-orchid/50 block font-bold">Crew Additions</span>
                     {formData.services.cinematicVideo && (
-                      <div className="flex justify-between items-center">
-                        <span className="text-white/60">Cinematic Film & Teaser</span>
-                        <span className="font-mono text-white/80">
+                      <div className="flex justify-between items-center pl-3.5">
+                        <span className="text-white/55">Cinematic Film & Teaser</span>
+                        <span className="font-mono text-white/75">
                           +{formatCurrency(PRICING.services.cinematicVideo.pricePerDay * (PRICING.events[formData.eventType].isFlat ? 1 : formData.duration))}
                         </span>
                       </div>
                     )}
                     {formData.services.traditionalPhoto && (
-                      <div className="flex justify-between items-center">
-                        <span className="text-white/60">Traditional Coverage</span>
-                        <span className="font-mono text-white/80">
+                      <div className="flex justify-between items-center pl-3.5">
+                        <span className="text-white/55">Traditional Coverage</span>
+                        <span className="font-mono text-white/75">
                           +{formatCurrency(PRICING.services.traditionalPhoto.pricePerDay * formData.duration)}
                         </span>
                       </div>
                     )}
                     {formData.services.droneAerial && (
-                      <div className="flex justify-between items-center">
-                        <span className="text-white/60">Drone Aerial Video</span>
-                        <span className="font-mono text-white/80">
+                      <div className="flex justify-between items-center pl-3.5">
+                        <span className="text-white/55">Drone Aerial Video</span>
+                        <span className="font-mono text-white/75">
                           +{formatCurrency(PRICING.services.droneAerial.pricePerDay * formData.duration)}
                         </span>
                       </div>
                     )}
                     {formData.services.sameDayEdit && (
-                      <div className="flex justify-between items-center">
-                        <span className="text-white/60">Same-Day Edit Video</span>
-                        <span className="font-mono text-white/80">
+                      <div className="flex justify-between items-center pl-3.5">
+                        <span className="text-white/55">Same-Day Edit Video</span>
+                        <span className="font-mono text-white/75">
                           +{formatCurrency(PRICING.services.sameDayEdit.flatPrice)}
                         </span>
                       </div>
@@ -1287,9 +1393,9 @@ export function PricingEstimator() {
 
                 {/* Legacy Albums item */}
                 {formData.albumCount > 0 && (
-                  <div className="flex justify-between items-center pt-2 border-t border-white/5">
-                    <span className="text-white/60">{formData.albumCount} x Premium Legacy Album(s)</span>
-                    <span className="font-mono text-white/80">
+                  <div className="flex justify-between items-center pt-2 border-t border-white/[0.05] pl-3.5">
+                    <span className="text-white/55">{formData.albumCount} x Legacy Album(s)</span>
+                    <span className="font-mono text-white/75">
                       +{formatCurrency(pricingSummary.albumsTotal)}
                     </span>
                   </div>
@@ -1297,9 +1403,9 @@ export function PricingEstimator() {
 
                 {/* Guest Scale item */}
                 {formData.scale !== 'intimate' && (
-                  <div className="flex justify-between items-center pt-2 border-t border-white/5">
-                    <span className="text-white/60">Scale: {PRICING.scale[formData.scale].name}</span>
-                    <span className="font-mono text-white/80">
+                  <div className="flex justify-between items-center pt-2 border-t border-white/[0.05] pl-3.5">
+                    <span className="text-white/55">Scale: {PRICING.scale[formData.scale].name}</span>
+                    <span className="font-mono text-white/75">
                       +{formatCurrency(pricingSummary.scalePrice)}
                     </span>
                   </div>
@@ -1307,9 +1413,9 @@ export function PricingEstimator() {
 
                 {/* Location logistics item */}
                 {formData.location !== 'local' && (
-                  <div className="flex justify-between items-center pt-2 border-t border-white/5">
-                    <span className="text-white/60">Logistics: {PRICING.locations[formData.location].name}</span>
-                    <span className="font-mono text-white/80">
+                  <div className="flex justify-between items-center pt-2 border-t border-white/[0.05] pl-3.5">
+                    <span className="text-white/55">Logistics: {PRICING.locations[formData.location].name}</span>
+                    <span className="font-mono text-white/75">
                       +{formatCurrency(pricingSummary.logisticsPrice)}
                     </span>
                   </div>
@@ -1317,46 +1423,50 @@ export function PricingEstimator() {
               </div>
 
               {/* Crew Recommendations Widget */}
-              <div className="bg-white/5 rounded-xl p-4 mb-8 text-xs text-white/80 space-y-3">
-                <span className="text-[10px] uppercase tracking-wider text-white/40 block font-bold">Recommended Production Crew</span>
-                <ul className="space-y-1.5 font-sans font-light">
+              <div className="bg-gradient-to-br from-white/[0.06] to-white/[0.02] rounded-xl p-3.5 mb-5 text-[11px] text-white/80 space-y-2 border border-white/[0.06]">
+                <span className="text-[9px] uppercase tracking-[0.15em] text-orchid/50 block font-bold">Production Crew</span>
+                <ul className="space-y-1 font-sans font-light">
                   {getCrewComposition().map((member, i) => (
                     <li key={i} className="flex items-center gap-2">
-                      <span className="w-1.5 h-1.5 rounded-full bg-orchid"></span>
-                      {member}
+                      <span className="w-1 h-1 rounded-full bg-orchid shadow-[0_0_4px_rgba(230,104,179,0.6)]"></span>
+                      <span className="text-white/70">{member}</span>
                     </li>
                   ))}
                 </ul>
               </div>
 
-              {/* Grand Total Counter */}
-              <div className="space-y-2 mb-8">
-                <span className="text-[10px] uppercase tracking-widest text-white/40 block font-semibold">Estimated Total</span>
-                <div className="flex items-baseline gap-2">
-                  <span className="text-3xl md:text-4xl font-serif font-bold text-orchid tracking-tight">
-                    {formatCurrency(pricingSummary.grandTotal)}
-                  </span>
-                  <span className="text-white/50 text-[10px] uppercase font-mono">INR</span>
+              {/* Grand Total Counter — Glowing display */}
+              <div className="relative mb-5">
+                <div className="bg-gradient-to-r from-plum/15 via-orchid/10 to-plum/15 rounded-xl p-4 border border-orchid/15 relative overflow-hidden">
+                  {/* Animated shimmer */}
+                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/[0.03] to-transparent animate-[shimmer_3s_ease-in-out_infinite]"></div>
+                  <span className="text-[9px] uppercase tracking-[0.2em] text-orchid/60 block font-bold mb-1.5 relative">Estimated Investment</span>
+                  <div className="flex items-baseline gap-2 relative">
+                    <span className="text-2xl md:text-3xl font-serif font-bold text-transparent bg-clip-text bg-gradient-to-r from-orchid via-[#f0a0d0] to-orchid tracking-tight">
+                      {formatCurrency(pricingSummary.grandTotal)}
+                    </span>
+                    <span className="text-orchid/50 text-[9px] uppercase font-mono">INR</span>
+                  </div>
+                  <p className="text-[9px] text-white/30 leading-relaxed italic mt-1 relative">
+                    *Excludes travel/lodging for destination shoots.
+                  </p>
                 </div>
-                <p className="text-[10px] text-white/40 leading-relaxed italic">
-                  *This estimate excludes travel/lodging expenses for destination shoots which are billed at actuals.
-                </p>
               </div>
 
-              {/* Branded PDF Actions */}
-              <div className="flex gap-4">
+              {/* Action Buttons */}
+              <div className="flex gap-3">
                 <button
                   type="button"
                   onClick={triggerPdfDownload}
-                  className="flex-1 inline-flex items-center justify-center gap-2 bg-white/10 hover:bg-white/20 text-white py-4 rounded-full text-xs font-semibold tracking-widest uppercase transition-all duration-300 border border-white/10 cursor-pointer"
+                  className="flex-1 inline-flex items-center justify-center gap-1.5 bg-white/[0.07] hover:bg-white/[0.12] text-white/80 py-3 rounded-xl text-[10px] font-semibold tracking-widest uppercase transition-all duration-300 border border-white/[0.08] cursor-pointer hover:border-white/15"
                 >
-                  <Download size={14} /> PDF
+                  <Download size={12} /> PDF
                 </button>
                 {currentStep < steps.length - 1 ? (
                   <button
                     type="button"
                     onClick={() => setCurrentStep(3)}
-                    className="flex-[2] inline-flex items-center justify-center gap-2 bg-gradient-to-r from-plum to-orchid text-white py-4 rounded-full text-xs font-semibold tracking-widest uppercase transition-all duration-300 hover:shadow-orchid/20 shadow-lg cursor-pointer"
+                    className="flex-[2] inline-flex items-center justify-center gap-2 bg-gradient-to-r from-plum to-orchid text-white py-3 rounded-xl text-[10px] font-bold tracking-widest uppercase transition-all duration-300 hover:shadow-[0_8px_25px_rgba(230,104,179,0.3)] shadow-lg cursor-pointer hover:-translate-y-0.5 border border-orchid/20"
                   >
                     Lock Estimate
                   </button>
@@ -1365,7 +1475,7 @@ export function PricingEstimator() {
                     type="button"
                     onClick={handleSubmit}
                     disabled={isSubmitting}
-                    className="flex-[2] inline-flex items-center justify-center gap-2 bg-gradient-to-r from-plum to-orchid text-white py-4 rounded-full text-xs font-semibold tracking-widest uppercase transition-all duration-300 hover:shadow-orchid/20 shadow-lg cursor-pointer"
+                    className="flex-[2] inline-flex items-center justify-center gap-2 bg-gradient-to-r from-plum to-orchid text-white py-3 rounded-xl text-[10px] font-bold tracking-widest uppercase transition-all duration-300 hover:shadow-[0_8px_25px_rgba(230,104,179,0.3)] shadow-lg cursor-pointer hover:-translate-y-0.5 border border-orchid/20"
                   >
                     {isSubmitting ? 'Securing...' : 'Secure Date'}
                   </button>
