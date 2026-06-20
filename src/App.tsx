@@ -10,6 +10,7 @@ import { ExperienceTimeline } from './components/ExperienceTimeline';
 import { AssociatePartners } from './components/AssociatePartners';
 import { Testimonials } from './components/Testimonials';
 import { InvestmentAccordion } from './components/InvestmentAccordion';
+import { PricingEstimator } from './components/PricingEstimator';
 import { CallToAction } from './components/CallToAction';
 import { Footer } from './components/Footer';
 function App() {
@@ -28,6 +29,7 @@ function App() {
         <AssociatePartners />
         <Testimonials />
         <InvestmentAccordion />
+        <PricingEstimator />
         <CallToAction />
         <Footer />
       </main>

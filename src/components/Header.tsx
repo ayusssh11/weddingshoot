@@ -6,7 +6,7 @@ export function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-  const navItems = ['Weddings', 'Pre-Weddings', 'Milestones', 'Corporate', 'Music Selectives'];
+  const navItems = ['Weddings', 'Pre-Weddings', 'Milestones', 'Corporate', 'Music Selectives', 'Estimator'];
 
   useEffect(() => {
     const handleScroll = () => {

@@ -49,6 +49,11 @@ export function Footer() {
                 </a>
               </li>
               <li>
+                <a href="#estimator" className="hover:text-orchid transition-colors duration-300">
+                  Pricing Estimator
+                </a>
+              </li>
+              <li>
                 <a href="#contact" className="hover:text-orchid transition-colors duration-300">
                   Availability
                 </a>
