@@ -346,1146 +346,597 @@ export function PricingEstimator() {
   };
 
   return (
-    <section className="bg-ivory py-10 sm:py-12 md:py-16 relative overflow-hidden" id="estimator">
+    <section className="bg-ivory pb-20 pt-24 sm:pt-28 md:pt-32 relative min-h-screen" id="estimator">
+      {/* Background Image at bottom */}
+      <div className="absolute inset-x-0 bottom-0 h-[800px] pointer-events-none z-0">
+        <div className="absolute inset-0 bg-gradient-to-b from-ivory via-ivory/60 to-transparent z-10" />
+        <img src="https://images.unsplash.com/photo-1519225421980-715cb0215aed?q=80&w=3000&auto=format&fit=crop" className="w-full h-full object-cover opacity-40 mix-blend-multiply" alt="" />
+      </div>
 
       {/* Stylesheet specifically for printing a clean branded invoice */}
       <style>{`
         @media print {
-          #root {
-            display: none !important;
-          }
-          #print-invoice-sheet, #print-invoice-sheet * {
-            visibility: visible !important;
-          }
-          #print-invoice-sheet {
-            display: block !important;
-            position: absolute !important;
-            left: 0 !important;
-            top: 0 !important;
-            width: 100% !important;
-            height: auto !important;
-            padding: 40px !important;
-            box-sizing: border-box !important;
-            background-color: white !important;
-            color: #120D16 !important;
-          }
+          body * { visibility: hidden; }
+          #estimator, #estimator * { visibility: visible; }
+          #estimator { position: absolute; left: 0; top: 0; width: 100%; background: white !important; }
+          .no-print { display: none !important; }
+          .print-only { display: block !important; }
+          .print-brand { display: flex !important; }
+          .print-header { border-bottom: 2px solid #8B337F; margin-bottom: 30px; padding-bottom: 20px; }
+          .print-item { border-bottom: 1px solid #eee; margin-bottom: 15px; padding-bottom: 15px; }
+          .print-total { border-top: 2px solid #120D16; padding-top: 20px; font-weight: bold; font-size: 1.5em; }
         }
       `}</style>
 
-      {/* Hidden Invoice sheet - rendered in absolute but transparent/hidden until print */}
-      {isMounted && createPortal(
-        <div id="print-invoice-sheet" className="hidden print:block bg-white p-12 text-[#120D16] max-w-4xl mx-auto font-sans leading-relaxed border border-warm-gray">
-
-          {/* Header */}
-          <div className="flex justify-between items-start border-b border-warm-gray pb-8 mb-8">
+      {/* Hidden PDF Printable Area */}
+      <div className="hidden print-only print-brand p-12 bg-white text-obsidian absolute top-0 left-0 w-full min-h-screen z-50">
+        <div className="w-full max-w-4xl mx-auto">
+          <div className="print-header flex justify-between items-end">
             <div>
-              <img
-                src="https://weddingshoot.in/wp-content/uploads/Wedding-Shoot-Logo-01.png"
-                alt="Wedding Shoot Logo"
-                className="h-16 w-auto object-contain mb-4"
-              />
-              <p className="font-serif italic text-lg text-charcoal">Fine Art Wedding Storytellers</p>
-              <p className="text-xs text-charcoal/60 mt-1">Gurgaon, Haryana, India | amanstudio78@gmail.com | +91 8700609950</p>
+              <h1 className="text-4xl font-serif text-plum mb-2">Wedding Shoot</h1>
+              <p className="text-charcoal/60 uppercase tracking-widest text-sm">Bespoke Investment Summary</p>
             </div>
             <div className="text-right">
-              <h1 className="font-serif text-2xl tracking-widest uppercase text-charcoal">Investment Estimate</h1>
-              <p className="text-sm font-semibold mt-2">Estimate ID: <span className="font-mono text-orchid font-bold">{quoteId}</span></p>
-              <p className="text-xs text-charcoal/60">Date: {new Date().toLocaleDateString('en-IN', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
+              <p className="font-mono text-sm text-charcoal/50">REF: {quoteId}</p>
+              <p className="font-mono text-sm text-charcoal/50">DATE: {new Date().toLocaleDateString()}</p>
             </div>
           </div>
-
-          {/* Client & Event Info */}
-          <div className="grid grid-cols-2 gap-8 mb-8 bg-ivory p-6 rounded-md border border-warm-gray/30">
-            <div>
-              <h3 className="text-xs uppercase tracking-wider text-charcoal/50 font-bold mb-2">COMMISSIONED FOR</h3>
-              <p className="text-sm font-bold">{formData.fullName || 'Valued Client'}</p>
-              <p className="text-xs text-charcoal/60 mt-1">Email: {formData.email || 'N/A'}</p>
-              <p className="text-xs text-charcoal/60">Phone: {formData.phone || 'N/A'}</p>
-            </div>
-            <div>
-              <h3 className="text-xs uppercase tracking-wider text-charcoal/50 font-bold mb-2">CELEBRATION DETAILS</h3>
-              <p className="text-sm font-bold">Event Format: <span className="font-serif italic">{PRICING.events[formData.eventType].name}</span></p>
-              <p className="text-xs text-charcoal/60 mt-1">Target Date: {formData.eventDate ? new Date(formData.eventDate).toLocaleDateString('en-IN', { dateStyle: 'long' }) : 'To Be Decided'}</p>
-              <p className="text-xs text-charcoal/60">Coverage: {formData.eventType === 'prewedding' ? 'Flat Rate' : `${formData.duration} Day(s)`}</p>
-              <p className="text-xs text-charcoal/60">Destination Logistics: {PRICING.locations[formData.location].name}</p>
-            </div>
+          
+          <div className="mb-12">
+            <h3 className="text-sm font-bold uppercase tracking-widest text-charcoal/40 mb-4">Client Details</h3>
+            <p className="text-xl font-serif">{formData.fullName || 'Valued Client'}</p>
+            <p className="text-charcoal/80">{formData.email}</p>
+            <p className="text-charcoal/80">{formData.phone}</p>
+            <p className="text-charcoal/80 mt-2">Target Date: {formData.eventDate}</p>
           </div>
 
-          {/* Invoice Items Table */}
-          <table className="w-full text-left border-collapse mb-8">
-            <thead>
-              <tr className="border-b-2 border-charcoal/10 text-xs uppercase tracking-wider text-charcoal/60">
-                <th className="py-3 font-semibold">Service Description</th>
-                <th className="py-3 font-semibold text-center">Duration / Qty</th>
-                <th className="py-3 font-semibold text-right">Estimate Cost</th>
-              </tr>
-            </thead>
-            <tbody className="text-sm">
-
-              {/* Base Event Price */}
-              <tr className="border-b border-warm-gray/30">
-                <td className="py-4 font-medium">
-                  {PRICING.events[formData.eventType].name}
-                  <span className="block text-xs font-light text-charcoal/60 mt-0.5">{PRICING.events[formData.eventType].desc}</span>
-                </td>
-                <td className="py-4 text-center text-charcoal/70">
-                  {PRICING.events[formData.eventType].isFlat ? '1 Flat' : `${formData.duration} Day(s)`}
-                </td>
-                <td className="py-4 text-right font-semibold">
-                  {formatCurrency(pricingSummary.basePriceTotal)}
-                </td>
-              </tr>
-
-              {/* Cinematic Video Add-on */}
-              {formData.services.cinematicVideo && (
-                <tr className="border-b border-warm-gray/30">
-                  <td className="py-4 font-medium">
-                    {PRICING.services.cinematicVideo.name}
-                    <span className="block text-xs font-light text-charcoal/60 mt-0.5">{PRICING.services.cinematicVideo.desc}</span>
-                  </td>
-                  <td className="py-4 text-center text-charcoal/70">
-                    {PRICING.events[formData.eventType].isFlat ? '1 Flat' : `${formData.duration} Day(s)`}
-                  </td>
-                  <td className="py-4 text-right font-semibold">
-                    {formatCurrency(PRICING.services.cinematicVideo.pricePerDay * (PRICING.events[formData.eventType].isFlat ? 1 : formData.duration))}
-                  </td>
-                </tr>
-              )}
-
-              {/* Traditional Photo Add-on */}
-              {formData.services.traditionalPhoto && (
-                <tr className="border-b border-warm-gray/30">
-                  <td className="py-4 font-medium">
-                    {PRICING.services.traditionalPhoto.name}
-                    <span className="block text-xs font-light text-charcoal/60 mt-0.5">{PRICING.services.traditionalPhoto.desc}</span>
-                  </td>
-                  <td className="py-4 text-center text-charcoal/70">
-                    {formData.duration} Day(s)
-                  </td>
-                  <td className="py-4 text-right font-semibold">
-                    {formatCurrency(PRICING.services.traditionalPhoto.pricePerDay * formData.duration)}
-                  </td>
-                </tr>
-              )}
-
-              {/* Drone Add-on */}
-              {formData.services.droneAerial && (
-                <tr className="border-b border-warm-gray/30">
-                  <td className="py-4 font-medium">
-                    {PRICING.services.droneAerial.name}
-                    <span className="block text-xs font-light text-charcoal/60 mt-0.5">{PRICING.services.droneAerial.desc}</span>
-                  </td>
-                  <td className="py-4 text-center text-charcoal/70">
-                    {formData.duration} Day(s)
-                  </td>
-                  <td className="py-4 text-right font-semibold">
-                    {formatCurrency(PRICING.services.droneAerial.pricePerDay * formData.duration)}
-                  </td>
-                </tr>
-              )}
-
-              {/* Same Day Edit Add-on */}
-              {formData.services.sameDayEdit && (
-                <tr className="border-b border-warm-gray/30">
-                  <td className="py-4 font-medium">
-                    {PRICING.services.sameDayEdit.name}
-                    <span className="block text-xs font-light text-charcoal/60 mt-0.5">{PRICING.services.sameDayEdit.desc}</span>
-                  </td>
-                  <td className="py-4 text-center text-charcoal/70">
-                    1 Flat
-                  </td>
-                  <td className="py-4 text-right font-semibold">
-                    {formatCurrency(PRICING.services.sameDayEdit.flatPrice)}
-                  </td>
-                </tr>
-              )}
-
-              {/* Art books */}
-              {formData.albumCount > 0 && (
-                <tr className="border-b border-warm-gray/30">
-                  <td className="py-4 font-medium">
-                    {PRICING.albums.name}
-                    <span className="block text-xs font-light text-charcoal/60 mt-0.5">High-definition archival prints in dynamic binding configurations.</span>
-                  </td>
-                  <td className="py-4 text-center text-charcoal/70">
-                    {formData.albumCount} Book(s)
-                  </td>
-                  <td className="py-4 text-right font-semibold">
-                    {formatCurrency(pricingSummary.albumsTotal)}
-                  </td>
-                </tr>
-              )}
-
-              {/* Scale adjustments */}
-              {formData.scale !== 'intimate' && (
-                <tr className="border-b border-warm-gray/30">
-                  <td className="py-4 font-medium">
-                    Event Scale: {PRICING.scale[formData.scale].name}
-                    <span className="block text-xs font-light text-charcoal/60 mt-0.5">Requires senior team staffing additions ({PRICING.scale[formData.scale].crewBonus}).</span>
-                  </td>
-                  <td className="py-4 text-center text-charcoal/70">
-                    1 Flat
-                  </td>
-                  <td className="py-4 text-right font-semibold">
-                    {formatCurrency(pricingSummary.scalePrice)}
-                  </td>
-                </tr>
-              )}
-
-              {/* Logistics */}
-              {formData.location !== 'local' && (
-                <tr className="border-b border-warm-gray/30">
-                  <td className="py-4 font-medium">
-                    Travel & Logistics: {PRICING.locations[formData.location].name}
-                    <span className="block text-xs font-light text-charcoal/60 mt-0.5">Calculated based on equipment freight and crew transport requirements.</span>
-                  </td>
-                  <td className="py-4 text-center text-charcoal/70">
-                    1 Flat
-                  </td>
-                  <td className="py-4 text-right font-semibold">
-                    {formatCurrency(pricingSummary.logisticsPrice)}
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-
-          {/* Invoice Summary */}
-          <div className="flex justify-between items-start">
-            <div className="w-1/2">
-              <h3 className="text-xs uppercase tracking-wider text-charcoal/50 font-bold mb-2">Crew Recommended</h3>
-              <ul className="text-xs text-charcoal/80 space-y-1">
-                {getCrewComposition().map((c, i) => (
-                  <li key={i} className="flex items-center gap-1.5">
-                    <span className="w-1 h-1 rounded-full bg-orchid"></span>
-                    {c}
-                  </li>
-                ))}
-              </ul>
-              {formData.notes && (
-                <div className="mt-4">
-                  <h4 className="text-xs font-bold text-charcoal/50 uppercase tracking-wider">CREATIVE NOTES</h4>
-                  <p className="text-xs italic text-charcoal/70 mt-1 font-serif">"{formData.notes}"</p>
-                </div>
-              )}
-            </div>
-            <div className="w-5/12 text-right">
-              <div className="flex justify-between py-1 text-sm text-charcoal/70">
-                <span>Subtotal:</span>
-                <span>{formatCurrency(pricingSummary.subtotal)}</span>
-              </div>
-              {formData.location !== 'local' && (
-                <div className="flex justify-between py-1 text-sm text-charcoal/70">
-                  <span>Logistics:</span>
-                  <span>{formatCurrency(pricingSummary.logisticsPrice)}</span>
-                </div>
-              )}
-              <div className="flex justify-between py-3 border-t-2 border-charcoal/10 mt-3 text-lg font-bold text-charcoal">
-                <span>Estimated Total:</span>
-                <span className="text-orchid">{formatCurrency(pricingSummary.grandTotal)}*</span>
-              </div>
-              <p className="text-[10px] text-charcoal/50 italic mt-2">*Taxes and local accommodation rules may apply as per final contract terms.</p>
-            </div>
-          </div>
-
-          {/* Print Terms & Footer */}
-          <div className="border-t border-warm-gray pt-8 mt-12 text-[10px] text-charcoal/50 space-y-3 leading-normal">
-            <p className="font-semibold text-charcoal/70 uppercase tracking-wider text-center">Important Terms & Agreements</p>
-            <div className="grid grid-cols-2 gap-6 text-left">
-              <div>
-                <p><strong>1. Retainer:</strong> A 50% non-refundable retainer along with a signed contract is required to secure our calendar. Dates are not held without a formal retainer booking.</p>
-                <p className="mt-1"><strong>2. Deliverables:</strong> Curated cinematic teasers will be delivered within 72 hours. Complete galleries and physical legacy art albums require 4-6 weeks.</p>
-              </div>
-              <div>
-                <p><strong>3. Crew Accommodation:</strong> For domestic and international destination shoots, client is requested to provide board and lodging for the crew size listed above.</p>
-                <p className="mt-1"><strong>4. Quote Validity:</strong> This digital quote generates an estimate of standard services valid for 30 days from invoice date.</p>
-              </div>
-            </div>
-            <div className="text-center pt-8 border-t border-warm-gray/30 flex justify-between items-center text-xs">
-              <p>Thank you for considering WeddingShoot Studio. Let's design legacy visual narratives.</p>
-              <div className="w-48 border-b border-charcoal/50 pb-1 text-center italic font-serif text-charcoal/40">Authorized Signatory</div>
-            </div>
-          </div>
-        </div>,
-        document.body
-      )}
-
-      {/* Interactive Estimator Layout */}
-      <div className="container mx-auto px-4 sm:px-6 lg:px-12 relative z-10 no-print">
-
-        {/* Glow Effects */}
-        <div className="absolute -top-32 -left-32 w-[500px] h-[500px] bg-orchid/5 rounded-full blur-[120px] pointer-events-none -z-10"></div>
-        <div className="absolute -bottom-32 -right-32 w-[500px] h-[500px] bg-plum/5 rounded-full blur-[120px] pointer-events-none -z-10"></div>
-
-        {/* Section Header */}
-        <div className="text-center max-w-2xl mx-auto mb-8 sm:mb-10 px-2 relative">
-          {/* Decorative flourish */}
-          <div className="flex items-center justify-center gap-4 mb-4">
-            <div className="h-px w-12 bg-gradient-to-r from-transparent to-plum/40"></div>
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" className="text-orchid/60">
-              <path d="M12 2L14.5 9.5L22 12L14.5 14.5L12 22L9.5 14.5L2 12L9.5 9.5L12 2Z" fill="currentColor" />
-            </svg>
-            <div className="h-px w-12 bg-gradient-to-l from-transparent to-plum/40"></div>
-          </div>
-          <span className="text-[10px] tracking-[0.4em] text-plum uppercase font-sans font-bold inline-block mb-2 bg-plum/[0.06] px-4 py-1 rounded-full border border-plum/10">
-            Legacy Commissions
-          </span>
-          <h2 className="font-serif text-2xl sm:text-3xl md:text-4xl text-obsidian leading-tight mt-2">
-            Tailor Your Investment
-          </h2>
-          <p className="text-charcoal/55 text-xs md:text-sm font-light mt-2 max-w-lg mx-auto leading-relaxed">
-            Build your personalized creative package below.
-          </p>
-        </div>
-
-        {/* Layout Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-start">
-
-          {/* Left Column: Multi-Step Interactive Form */}
-          <div className="lg:col-span-7 bg-white rounded-2xl p-5 sm:p-6 md:p-8 border border-warm-gray/20 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.05)] relative overflow-hidden">
-
-            {/* Decorative corner accents */}
-            <div className="absolute top-0 left-0 w-24 h-24 pointer-events-none">
-              <div className="absolute top-4 left-4 w-8 h-px bg-gradient-to-r from-plum/30 to-transparent"></div>
-              <div className="absolute top-4 left-4 w-px h-8 bg-gradient-to-b from-plum/30 to-transparent"></div>
-            </div>
-            <div className="absolute top-0 right-0 w-24 h-24 pointer-events-none">
-              <div className="absolute top-4 right-4 w-8 h-px bg-gradient-to-l from-plum/30 to-transparent"></div>
-              <div className="absolute top-4 right-4 w-px h-8 bg-gradient-to-b from-plum/30 to-transparent"></div>
-            </div>
+          <div className="mb-12">
+            <h3 className="text-sm font-bold uppercase tracking-widest text-charcoal/40 mb-6">Package Configuration</h3>
             
-            {/* Form Progress Header */}
-            <div className="flex justify-between items-start sm:items-center mb-5 sm:mb-6 pb-5 border-b border-warm-gray/20 gap-2 sm:gap-0 overflow-x-auto hide-scrollbar" aria-label="Progress">
-              {steps.map((s, index) => (
-                <div
-                  key={index}
-                  className={`flex flex-col items-center flex-1 text-center relative ${index < steps.length - 1 ? "after:content-[''] after:h-[2px] after:w-full after:absolute after:top-[15px] after:left-1/2 after:-z-10 after:transition-colors after:duration-500" : ""} ${index < steps.length - 1 && currentStep > index ? 'after:bg-gradient-to-r after:from-plum after:to-orchid/60' : index < steps.length - 1 ? 'after:bg-warm-gray/30' : ''}`}
-                  aria-current={currentStep === index ? "step" : undefined}
-                >
-                  <button
-                    onClick={() => {
-                      if (index === 0) {
-                        setCurrentStep(0);
-                      } else {
-                        const nameErr = validateField('fullName', formData.fullName);
-                        const emailErr = validateField('email', formData.email);
-                        const phoneErr = validateField('phone', formData.phone);
-                        const dateErr = validateField('eventDate', formData.eventDate);
-
-                        if (nameErr || emailErr || phoneErr || dateErr) {
-                          setErrors({
-                            fullName: nameErr,
-                            email: emailErr,
-                            phone: phoneErr,
-                            eventDate: dateErr
-                          });
-                          setTouched({
-                            fullName: true,
-                            email: true,
-                            phone: true,
-                            eventDate: true
-                          });
-                          setCurrentStep(0);
-                        } else {
-                          setCurrentStep(index);
-                        }
-                      }
-                    }}
-                    className={`w-8 h-8 rounded-full flex items-center justify-center text-[10px] font-bold transition-all duration-500 z-10 relative ${
-                      currentStep === index 
-                        ? 'bg-gradient-to-br from-plum to-orchid text-white shadow-[0_6px_24px_rgba(218,112,214,0.35)] ring-[3px] ring-orchid/15 scale-110' 
-                        : currentStep > index 
-                          ? 'bg-gradient-to-br from-obsidian to-charcoal text-white shadow-md' 
-                          : 'border-[1.5px] border-warm-gray/50 bg-ivory/50 text-charcoal/35 hover:border-plum/30 hover:text-charcoal/60 hover:bg-white'
-                    }`}
-                  >
-                    {currentStep > index ? <Check size={12} strokeWidth={3} /> : index + 1}
-                  </button>
-                  <div className="mt-1.5 hidden sm:block">
-                    <span className={`text-[9px] tracking-wider uppercase font-bold block transition-colors duration-300 ${currentStep === index ? 'text-plum' : currentStep > index ? 'text-obsidian/70' : 'text-charcoal/40'}`}>
-                      {s.title}
-                    </span>
-                  </div>
-                </div>
-              ))}
+            <div className="print-item flex justify-between">
+              <div>
+                <p className="font-bold text-lg">{PRICING.events[formData.eventType].name}</p>
+                <p className="text-charcoal/60">{PRICING.events[formData.eventType].isFlat ? 'Flat rate package' : `${formData.duration} Day(s) of coverage`}</p>
+              </div>
+              <p className="font-mono">{formatCurrency(pricingSummary.basePriceTotal)}</p>
             </div>
 
-            {/* Success Overlay Panel */}
-            <AnimatePresence>
-              {submitted && (
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.95 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0 }}
-                  className="absolute inset-0 bg-white z-20 flex flex-col items-center justify-center p-8 text-center"
-                >
-                  <motion.div
-                    initial={{ scale: 0 }}
-                    animate={{ scale: 1 }}
-                    transition={{ type: 'spring', stiffness: 200, damping: 15 }}
-                    className="w-20 h-20 bg-emerald-50 rounded-full flex items-center justify-center text-emerald-500 mb-6 border border-emerald-100"
-                  >
-                    <CheckCircle2 size={40} />
-                  </motion.div>
-                  <h3 className="font-serif text-3xl text-obsidian mb-3">
-                    Commission Request Received
-                  </h3>
-                  <p className="text-charcoal/60 text-sm max-w-sm mb-6 font-sans font-light">
-                    Thank you, {formData.fullName}. Your custom investment proposal has been queued under quote ID <span className="font-mono font-bold text-plum">{quoteId}</span>. Our lead director will get in touch with you within 24 hours.
-                  </p>
-                  <div className="flex flex-col sm:flex-row gap-4 w-full justify-center">
-                    <button
-                      onClick={triggerPdfDownload}
-                      className="inline-flex items-center justify-center bg-ivory border border-warm-gray text-charcoal px-6 py-4 rounded-full text-xs font-semibold tracking-widest uppercase transition-all duration-300 hover:bg-warm-gray/40"
-                    >
-                      <Download size={14} className="mr-2" />
-                      Save Branded PDF
-                    </button>
-                    <button
-                      onClick={() => {
-                        setSubmitted(false);
-                        setCurrentStep(0);
-                        setFormData({
-                          eventType: 'wedding',
-                          duration: 2,
-                          services: {
-                            cinematicVideo: true,
-                            traditionalPhoto: false,
-                            droneAerial: false,
-                            sameDayEdit: false,
-                          },
-                          albumCount: 1,
-                          location: 'local',
-                          scale: 'medium',
-                          fullName: '',
-                          email: '',
-                          phone: '',
-                          eventDate: '',
-                          notes: ''
-                        });
-                      }}
-                      className="bg-obsidian text-white px-6 py-4 rounded-full text-xs font-semibold tracking-widest uppercase transition-all duration-300 hover:bg-plum"
-                    >
-                      Configure Another
-                    </button>
+            {Object.entries(formData.services).some(([_, val]) => val) && (
+              <div className="print-item">
+                <p className="font-bold mb-3">Crew Additions & Services</p>
+                {formData.services.cinematicVideo && (
+                  <div className="flex justify-between text-charcoal/80 mb-2 pl-4">
+                    <span>Cinematic Film & Teaser</span>
+                    <span className="font-mono">+{formatCurrency(PRICING.services.cinematicVideo.pricePerDay * (PRICING.events[formData.eventType].isFlat ? 1 : formData.duration))}</span>
                   </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
+                )}
+                {formData.services.traditionalPhoto && (
+                  <div className="flex justify-between text-charcoal/80 mb-2 pl-4">
+                    <span>Traditional Coverage</span>
+                    <span className="font-mono">+{formatCurrency(PRICING.services.traditionalPhoto.pricePerDay * formData.duration)}</span>
+                  </div>
+                )}
+                {formData.services.droneAerial && (
+                  <div className="flex justify-between text-charcoal/80 mb-2 pl-4">
+                    <span>Drone Aerial Video</span>
+                    <span className="font-mono">+{formatCurrency(PRICING.services.droneAerial.pricePerDay * formData.duration)}</span>
+                  </div>
+                )}
+                {formData.services.sameDayEdit && (
+                  <div className="flex justify-between text-charcoal/80 mb-2 pl-4">
+                    <span>Same-Day Edit Video</span>
+                    <span className="font-mono">+{formatCurrency(PRICING.services.sameDayEdit.flatPrice)}</span>
+                  </div>
+                )}
+              </div>
+            )}
 
-            <form onSubmit={handleSubmit} className="space-y-8">
+            {formData.albumCount > 0 && (
+              <div className="print-item flex justify-between">
+                <div>
+                  <p className="font-bold">Premium Legacy Albums</p>
+                  <p className="text-charcoal/60">Quantity: {formData.albumCount}</p>
+                </div>
+                <p className="font-mono">+{formatCurrency(pricingSummary.albumsTotal)}</p>
+              </div>
+            )}
 
-              {/* STEP 1: CONTACT DETAILS (UNLOCK ESTIMATOR) */}
-              {currentStep === 0 && (
-                <motion.div
-                  initial={{ opacity: 0, x: 20 }}
+            {formData.scale !== 'intimate' && (
+              <div className="print-item flex justify-between">
+                <div>
+                  <p className="font-bold">Event Scale: {PRICING.scale[formData.scale].name}</p>
+                  <p className="text-charcoal/60">Crew scaling factor applied</p>
+                </div>
+                <p className="font-mono">+{formatCurrency(pricingSummary.scalePrice)}</p>
+              </div>
+            )}
+
+            {formData.location !== 'local' && (
+              <div className="print-item flex justify-between">
+                <div>
+                  <p className="font-bold">Destination Logistics</p>
+                  <p className="text-charcoal/60">{PRICING.locations[formData.location].name} zone mapping</p>
+                </div>
+                <p className="font-mono">+{formatCurrency(pricingSummary.logisticsPrice)}</p>
+              </div>
+            )}
+          </div>
+
+          <div className="print-total flex justify-between items-center text-plum">
+            <p className="uppercase tracking-widest text-sm">Estimated Total</p>
+            <p className="text-3xl">{formatCurrency(pricingSummary.grandTotal)}</p>
+          </div>
+          
+          <div className="mt-20 pt-10 border-t border-charcoal/10 text-center text-charcoal/40 text-xs italic">
+            <p>This document is an estimate and not a binding contract. Travel & accommodation for destination events are billed at actuals.</p>
+            <p className="mt-2">Valid for 14 days from generation date.</p>
+          </div>
+        </div>
+      </div>
+
+      <div className="max-w-[85rem] mx-auto px-4 relative z-10">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start relative z-10">
+
+          {/* Right Column: Investment Summary */}
+          <div className="lg:col-span-4 order-2 lg:order-2 lg:sticky lg:top-32 w-full">
+            <AnimatePresence mode="popLayout">
+              {currentStep > 0 ? (
+                <motion.div 
+                  initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -20 }}
-                  transition={{ duration: 0.4 }}
-                  className="space-y-5"
+                  exit={{ opacity: 0, scale: 0.95 }}
+                  className="bg-gradient-to-b from-[#ece7e1] to-[#e6dfd8] rounded-[2rem] p-6 shadow-xl border border-white/50 backdrop-blur-md flex flex-col gap-6 no-print relative overflow-hidden"
                 >
-                  {/* Step header with decorative accent */}
-                  <div className="relative">
-                    <div className="flex items-center gap-2.5 mb-1">
-                      <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-plum/10 to-orchid/10 flex items-center justify-center border border-plum/10">
-                        <User size={14} className="text-plum" />
+                  {/* Decorative faint pattern */}
+                  <div className="absolute inset-0 opacity-[0.03] pointer-events-none" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, black 1px, transparent 0)', backgroundSize: '24px 24px' }}></div>
+
+                  {/* Top: Breakdown */}
+                  <div className="relative z-10">
+                    <h4 className="text-[9px] uppercase tracking-[0.25em] font-bold text-obsidian mb-6">Investment Summary</h4>
+                    
+                    <div className="space-y-4 text-xs font-serif italic text-obsidian">
+                      {/* Base Event */}
+                      <div className="flex justify-between items-center pb-3 border-b border-obsidian/5">
+                        <span>{PRICING.events[formData.eventType].name} ({formData.duration} Days)</span>
+                        <span className="font-mono not-italic font-bold text-[13px]">{formatCurrency(pricingSummary.basePriceTotal)}</span>
                       </div>
-                      <div>
-                        <h3 className="text-sm font-serif text-charcoal leading-tight">Begin Your Legacy</h3>
-                        <p className="text-[10px] text-charcoal/45 font-light">
-                          Share your details to unlock the pricing studio
-                        </p>
-                      </div>
+                      
+                      {/* Addons summary (condensed) */}
+                      {formData.services.cinematicVideo && (
+                        <div className="flex justify-between items-center pb-3 border-b border-obsidian/5 text-obsidian/80">
+                          <span>Cinematic Film & Teaser</span>
+                          <span className="font-mono not-italic text-xs">+{formatCurrency(PRICING.services.cinematicVideo.pricePerDay * (PRICING.events[formData.eventType].isFlat ? 1 : formData.duration))}</span>
+                        </div>
+                      )}
+
+                      {formData.albumCount > 0 && (
+                        <div className="flex justify-between items-center pb-3 border-b border-obsidian/5 text-obsidian/80">
+                          <span>Legacy Album(s)</span>
+                          <span className="font-mono not-italic text-xs">+{formatCurrency(pricingSummary.albumsTotal)}</span>
+                        </div>
+                      )}
+
+                      {formData.scale !== 'intimate' && (
+                        <div className="flex justify-between items-center pb-3 border-b border-obsidian/5 text-obsidian/80">
+                          <span>{PRICING.scale[formData.scale].name} Scale Premium</span>
+                          <span className="font-mono not-italic text-xs">+{formatCurrency(pricingSummary.scalePrice)}</span>
+                        </div>
+                      )}
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-5 gap-y-4">
-                    {/* Name */}
-                    <div className="flex flex-col relative group">
-                      <label htmlFor="fullName" className="text-[10px] uppercase tracking-[0.15em] text-charcoal/50 mb-1.5 font-semibold flex items-center gap-1.5">
-                        <span className="w-1 h-1 rounded-full bg-plum/40"></span>
-                        Full Name <span className="text-orchid">*</span>
-                      </label>
-                      <div className="relative">
-                        <div className="absolute left-0 top-0 bottom-0 w-[3px] rounded-full bg-gradient-to-b from-plum/0 via-plum/0 to-plum/0 group-focus-within:from-plum group-focus-within:via-orchid group-focus-within:to-plum/30 transition-all duration-500"></div>
-                        <User className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-charcoal/25 group-focus-within:text-plum transition-colors duration-300" />
+                  {/* Bottom: Total Block */}
+                  <div className="bg-[#0f0a14] text-white rounded-2xl p-6 flex flex-col justify-center shadow-2xl relative z-10 mt-2">
+                    <span className="text-[8px] uppercase tracking-[0.2em] font-bold text-white/50 mb-2 block">Total Estimate</span>
+                    <span className="text-3xl font-serif font-bold text-white mb-2 tracking-tight">
+                      {formatCurrency(pricingSummary.grandTotal)}
+                    </span>
+                    <p className="text-[8px] text-white/30 italic leading-relaxed mb-6">
+                      *excludes travel/lodging for destination shoots.
+                    </p>
+                    
+                    {currentStep < steps.length - 1 ? (
+                      <button 
+                        type="button" 
+                        onClick={() => setCurrentStep(3)}
+                        className="w-full bg-white text-obsidian py-3.5 rounded text-[10px] uppercase tracking-widest font-bold hover:bg-ivory transition-colors cursor-pointer"
+                      >
+                        Lock Estimate
+                      </button>
+                    ) : (
+                      <button 
+                        type="submit" 
+                        disabled={isSubmitting}
+                        className="w-full bg-white text-obsidian py-3.5 rounded text-[10px] uppercase tracking-widest font-bold hover:bg-ivory transition-colors cursor-pointer"
+                      >
+                        {isSubmitting ? 'Securing...' : 'Secure Booking'}
+                      </button>
+                    )}
+                  </div>
+                </motion.div>
+              ) : (
+                <div className="hidden lg:flex h-full flex-col justify-center items-center opacity-40 text-center px-8 border-2 border-dashed border-warm-gray/50 rounded-[2rem]">
+                  <p className="font-serif italic text-lg text-obsidian">Your bespoke summary will appear here once you begin.</p>
+                </div>
+              )}
+            </AnimatePresence>
+          </div>
+
+          {/* Left Column: Form */}
+          <div className="lg:col-span-8 flex flex-col gap-6 relative order-1 lg:order-1 w-full">
+            <form onSubmit={handleSubmit} className="flex flex-col gap-6">
+
+              {/* STEPPER UI */}
+              <div className="bg-white/80 backdrop-blur-md rounded-2xl p-6 sm:p-8 shadow-[0_4px_20px_rgb(0,0,0,0.03)] border border-white">
+                <div className="flex justify-between items-center relative z-0">
+                  {/* Background Track line */}
+                  <div className="absolute top-1/2 left-0 right-0 h-px bg-warm-gray/40 -z-10 -translate-y-1/2"></div>
+                  
+                  {/* Active Track line */}
+                  <div 
+                    className="absolute top-1/2 left-0 h-px bg-obsidian -z-10 -translate-y-1/2 transition-all duration-700 ease-out"
+                    style={{ width: `${(currentStep / (steps.length - 1)) * 100}%` }}
+                  ></div>
+
+                  {steps.map((s, index) => {
+                    const isCompleted = currentStep > index;
+                    const isActive = currentStep === index;
+                    
+                    return (
+                      <button
+                        key={index}
+                        type="button"
+                        onClick={() => {
+                          if (index === 0) setCurrentStep(0);
+                          else if (index <= currentStep) setCurrentStep(index);
+                          else {
+                            if (currentStep === 0) {
+                              const nameErr = validateField('fullName', formData.fullName);
+                              const emailErr = validateField('email', formData.email);
+                              if (!nameErr && !emailErr) setCurrentStep(index);
+                            }
+                          }
+                        }}
+                        className="flex flex-col items-center gap-3 relative cursor-pointer group"
+                      >
+                        <div className={`w-10 h-10 rounded-full flex items-center justify-center transition-all duration-500 shadow-sm
+                          ${isCompleted ? 'bg-obsidian text-white border-2 border-obsidian' : 
+                            isActive ? 'bg-white text-obsidian border-2 border-warm-gray ring-4 ring-ivory' : 
+                            'bg-white text-charcoal/30 border border-warm-gray/50 hover:border-warm-gray'}
+                        `}>
+                          {isCompleted ? <Check size={16} strokeWidth={2.5} /> : <span className="text-xs font-semibold font-mono tracking-tighter">0{index + 1}</span>}
+                        </div>
+                        <span className={`text-[8px] sm:text-[9px] uppercase tracking-[0.1em] sm:tracking-[0.15em] font-bold absolute -bottom-6 sm:-bottom-6 whitespace-nowrap transition-colors duration-300
+                          ${isActive || isCompleted ? 'text-obsidian' : 'text-charcoal/30'}
+                        `}>
+                          {isActive ? s.title : <span className="hidden sm:inline">0{index + 1} {s.title}</span>}
+                        </span>
+                      </button>
+                    )
+                  })}
+                </div>
+              </div>
+
+              {/* STEP 1: CONTACT */}
+              <AnimatePresence mode="wait">
+                {currentStep === 0 && (
+                  <motion.div
+                    key="step0"
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    transition={{ duration: 0.4 }}
+                    className="bg-white/80 backdrop-blur-md rounded-2xl p-6 sm:p-10 shadow-[0_4px_20px_rgb(0,0,0,0.03)] border border-white"
+                  >
+                    <div className="mb-8">
+                      <h3 className="text-xl md:text-2xl font-serif italic text-obsidian mb-2">Begin Your Story</h3>
+                      <p className="text-xs text-charcoal/50 uppercase tracking-widest font-semibold">Share your details</p>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      {/* Name */}
+                      <div className="flex flex-col">
+                        <label htmlFor="fullName" className="text-[10px] uppercase tracking-[0.15em] text-charcoal/50 mb-2 font-semibold">
+                          Full Name *
+                        </label>
                         <input
                           type="text"
                           id="fullName"
                           name="fullName"
-                          required
-                          autoComplete="name"
                           value={formData.fullName}
                           onChange={handleInputChange}
                           onBlur={handleBlur}
-                          placeholder="Your full name"
-                          aria-describedby={errors.fullName ? "fullName-error" : undefined}
-                          className={`w-full bg-ivory/60 border rounded-lg py-2.5 pl-10 pr-3 text-sm text-charcoal placeholder:text-charcoal/25 focus:outline-none focus:border-plum/50 focus:ring-2 focus:ring-plum/10 focus:bg-white transition-all duration-300 ${errors.fullName ? 'border-red-300 focus:border-red-400 focus:ring-red-100 bg-red-50/30' : 'border-warm-gray/40 hover:border-warm-gray/70'
-                            }`}
+                          placeholder="Priya Sharma"
+                          className={`bg-transparent border-b ${errors.fullName ? 'border-red-400' : 'border-warm-gray focus:border-obsidian'} py-3 text-sm text-obsidian placeholder:text-charcoal/20 focus:outline-none transition-colors rounded-none`}
                         />
+                        {errors.fullName && touched.fullName && <span className="text-[10px] text-red-500 mt-1">{errors.fullName}</span>}
                       </div>
-                      {errors.fullName && touched.fullName && (
-                        <span id="fullName-error" className="text-[10px] text-red-500 font-medium mt-2 flex items-center gap-1 pl-1">
-                          <AlertCircle size={10} /> {errors.fullName}
-                        </span>
-                      )}
-                    </div>
 
-                    {/* Email */}
-                    <div className="flex flex-col relative group">
-                      <label htmlFor="email" className="text-[10px] uppercase tracking-[0.15em] text-charcoal/50 mb-1.5 font-semibold flex items-center gap-1.5">
-                        <span className="w-1 h-1 rounded-full bg-plum/40"></span>
-                        Email Address <span className="text-orchid">*</span>
-                      </label>
-                      <div className="relative">
-                        <div className="absolute left-0 top-0 bottom-0 w-[3px] rounded-full bg-gradient-to-b from-plum/0 via-plum/0 to-plum/0 group-focus-within:from-plum group-focus-within:via-orchid group-focus-within:to-plum/30 transition-all duration-500"></div>
-                        <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-charcoal/25 group-focus-within:text-plum transition-colors duration-300" />
+                      {/* Email */}
+                      <div className="flex flex-col">
+                        <label htmlFor="email" className="text-[10px] uppercase tracking-[0.15em] text-charcoal/50 mb-2 font-semibold">
+                          Email Address *
+                        </label>
                         <input
                           type="email"
                           id="email"
                           name="email"
-                          required
-                          autoComplete="email"
                           value={formData.email}
                           onChange={handleInputChange}
                           onBlur={handleBlur}
-                          placeholder="your.email@domain.com"
-                          aria-describedby={errors.email ? "email-error" : undefined}
-                          className={`w-full bg-ivory/60 border rounded-lg py-2.5 pl-10 pr-3 text-sm text-charcoal placeholder:text-charcoal/25 focus:outline-none focus:border-plum/50 focus:ring-2 focus:ring-plum/10 focus:bg-white transition-all duration-300 ${errors.email ? 'border-red-300 focus:border-red-400 focus:ring-red-100 bg-red-50/30' : 'border-warm-gray/40 hover:border-warm-gray/70'
-                            }`}
+                          placeholder="priya@example.com"
+                          className={`bg-transparent border-b ${errors.email ? 'border-red-400' : 'border-warm-gray focus:border-obsidian'} py-3 text-sm text-obsidian placeholder:text-charcoal/20 focus:outline-none transition-colors rounded-none`}
                         />
+                        {errors.email && touched.email && <span className="text-[10px] text-red-500 mt-1">{errors.email}</span>}
                       </div>
-                      {errors.email && touched.email && (
-                        <span id="email-error" className="text-[10px] text-red-500 font-medium mt-2 flex items-center gap-1 pl-1">
-                          <AlertCircle size={10} /> {errors.email}
-                        </span>
-                      )}
-                    </div>
 
-                    {/* Phone */}
-                    <div className="flex flex-col relative group">
-                      <label htmlFor="phone" className="text-[10px] uppercase tracking-[0.15em] text-charcoal/50 mb-1.5 font-semibold flex items-center gap-1.5">
-                        <span className="w-1 h-1 rounded-full bg-plum/40"></span>
-                        Contact Number <span className="text-orchid">*</span>
-                      </label>
-                      <div className="relative">
-                        <div className="absolute left-0 top-0 bottom-0 w-[3px] rounded-full bg-gradient-to-b from-plum/0 via-plum/0 to-plum/0 group-focus-within:from-plum group-focus-within:via-orchid group-focus-within:to-plum/30 transition-all duration-500"></div>
-                        <Phone className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-charcoal/25 group-focus-within:text-plum transition-colors duration-300" />
+                      {/* Phone */}
+                      <div className="flex flex-col">
+                        <label htmlFor="phone" className="text-[10px] uppercase tracking-[0.15em] text-charcoal/50 mb-2 font-semibold">
+                          Contact Number *
+                        </label>
                         <input
                           type="tel"
                           id="phone"
                           name="phone"
-                          required
-                          autoComplete="tel"
-                          inputMode="tel"
                           value={formData.phone}
                           onChange={handleInputChange}
                           onBlur={handleBlur}
-                          placeholder="+91 XXXXX XXXXX"
-                          aria-describedby={errors.phone ? "phone-error" : undefined}
-                          className={`w-full bg-ivory/60 border rounded-lg py-2.5 pl-10 pr-3 text-sm text-charcoal placeholder:text-charcoal/25 focus:outline-none focus:border-plum/50 focus:ring-2 focus:ring-plum/10 focus:bg-white transition-all duration-300 ${errors.phone ? 'border-red-300 focus:border-red-400 focus:ring-red-100 bg-red-50/30' : 'border-warm-gray/40 hover:border-warm-gray/70'
-                            }`}
+                          placeholder="+91 98765 43210"
+                          className={`bg-transparent border-b ${errors.phone ? 'border-red-400' : 'border-warm-gray focus:border-obsidian'} py-3 text-sm text-obsidian placeholder:text-charcoal/20 focus:outline-none transition-colors rounded-none`}
                         />
+                        {errors.phone && touched.phone && <span className="text-[10px] text-red-500 mt-1">{errors.phone}</span>}
                       </div>
-                      {errors.phone && touched.phone && (
-                        <span id="phone-error" className="text-[10px] text-red-500 font-medium mt-2 flex items-center gap-1 pl-1">
-                          <AlertCircle size={10} /> {errors.phone}
-                        </span>
-                      )}
-                    </div>
 
-                    {/* Target Date */}
-                    <div className="flex flex-col relative group">
-                      <label htmlFor="eventDate" className="text-[10px] uppercase tracking-[0.15em] text-charcoal/50 mb-1.5 font-semibold flex items-center gap-1.5">
-                        <span className="w-1 h-1 rounded-full bg-plum/40"></span>
-                        Celebration Date <span className="text-orchid">*</span>
-                      </label>
-                      <div className="relative">
-                        <div className="absolute left-0 top-0 bottom-0 w-[3px] rounded-full bg-gradient-to-b from-plum/0 via-plum/0 to-plum/0 group-focus-within:from-plum group-focus-within:via-orchid group-focus-within:to-plum/30 transition-all duration-500"></div>
-                        <Calendar className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-charcoal/25 group-focus-within:text-plum transition-colors duration-300" />
+                      {/* Date */}
+                      <div className="flex flex-col">
+                        <label htmlFor="eventDate" className="text-[10px] uppercase tracking-[0.15em] text-charcoal/50 mb-2 font-semibold">
+                          Celebration Date *
+                        </label>
                         <input
                           type="date"
                           id="eventDate"
                           name="eventDate"
-                          required
                           value={formData.eventDate}
                           onChange={handleInputChange}
                           onBlur={handleBlur}
-                          aria-describedby={errors.eventDate ? "eventDate-error" : undefined}
-                          className={`w-full bg-ivory/60 border rounded-lg py-2.5 pl-10 pr-3 text-sm text-charcoal placeholder:text-charcoal/25 focus:outline-none focus:border-plum/50 focus:ring-2 focus:ring-plum/10 focus:bg-white transition-all duration-300 ${errors.eventDate ? 'border-red-300 focus:border-red-400 focus:ring-red-100 bg-red-50/30' : 'border-warm-gray/40 hover:border-warm-gray/70'
-                            }`}
+                          className={`bg-transparent border-b ${errors.eventDate ? 'border-red-400' : 'border-warm-gray focus:border-obsidian'} py-3 text-sm text-obsidian focus:outline-none transition-colors rounded-none`}
                         />
+                        {errors.eventDate && touched.eventDate && <span className="text-[10px] text-red-500 mt-1">{errors.eventDate}</span>}
                       </div>
-                      {errors.eventDate && touched.eventDate && (
-                        <span id="eventDate-error" className="text-[10px] text-red-500 font-medium mt-2 flex items-center gap-1 pl-1">
-                          <AlertCircle size={10} /> {errors.eventDate}
-                        </span>
-                      )}
                     </div>
-                  </div>
+                  </motion.div>
+                )}
 
-                  {/* Trust indicators */}
-                  <div className="flex items-center justify-center gap-6 pt-2">
-                    <div className="flex items-center gap-1.5 text-[10px] text-charcoal/35">
-                      <Lock size={10} className="text-plum/40" />
-                      <span>SSL Encrypted</span>
-                    </div>
-                    <div className="w-px h-3 bg-warm-gray/40"></div>
-                    <div className="flex items-center gap-1.5 text-[10px] text-charcoal/35">
-                      <CheckCircle2 size={10} className="text-plum/40" />
-                      <span>No Spam, Ever</span>
-                    </div>
-                    <div className="w-px h-3 bg-warm-gray/40"></div>
-                    <div className="flex items-center gap-1.5 text-[10px] text-charcoal/35">
-                      <CheckCircle2 size={10} className="text-plum/40" />
-                      <span>Instant Quote</span>
-                    </div>
-                  </div>
-                </motion.div>
-              )}
-
-              {/* STEP 2: EVENT DETAILS */}
-              {currentStep === 1 && (
-                <motion.div
-                  initial={{ opacity: 0, x: 20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -20 }}
-                  transition={{ duration: 0.4 }}
-                  className="space-y-5"
-                >
-                  <div>
-                    <div className="flex items-center gap-2.5 mb-4">
-                      <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-plum/10 to-orchid/10 flex items-center justify-center border border-plum/10">
-                        <Calendar size={14} className="text-plum" />
-                      </div>
-                      <div>
-                        <h3 className="text-sm font-serif text-charcoal leading-tight">Choose Celebration Format</h3>
-                        <p className="text-[10px] text-charcoal/45 font-light">Select the type of event you're planning</p>
-                      </div>
-                    </div>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                      {(Object.keys(PRICING.events) as EventType[]).map((type) => {
-                        const evt = PRICING.events[type];
-                        const isSelected = formData.eventType === type;
-                        return (
-                          <button
-                            key={type}
-                            type="button"
-                            onClick={() => setFormData(prev => ({ ...prev, eventType: type }))}
-                            className={`flex flex-col p-3.5 rounded-xl border-2 text-left transition-all duration-300 relative group cursor-pointer ${
-                              isSelected 
-                                ? 'border-plum/70 bg-gradient-to-br from-plum/[0.04] to-orchid/[0.02] shadow-[0_4px_16px_rgba(139,51,127,0.1)]' 
-                                : 'border-warm-gray/30 bg-white hover:border-plum/20 hover:shadow-sm'
-                            }`}
-                          >
-                            {isSelected && (
-                              <div className="absolute right-3 top-3 w-5 h-5 rounded-full bg-gradient-to-br from-plum to-orchid text-white flex items-center justify-center shadow-md">
-                                <Check size={10} strokeWidth={3} />
-                              </div>
-                            )}
-                            <span className={`text-[9px] font-bold uppercase tracking-[0.12em] mb-1 transition-colors duration-300 ${isSelected ? 'text-plum' : 'text-charcoal/40'}`}>
-                              {type === 'wedding' ? '01 / WEDDING' : type === 'prewedding' ? '02 / PRE-WEDDING' : type === 'engagement' ? '03 / ROKA' : '04 / MILESTONE'}
-                            </span>
-                            <span className="font-serif text-sm font-bold text-obsidian mb-0.5">
-                              {evt.name}
-                            </span>
-                            <span className="text-[10px] text-charcoal/55 leading-snug font-light line-clamp-2">
-                              {evt.desc}
-                            </span>
-                          </button>
-                        );
-                      })}
-                    </div>
-                  </div>
-
-                  {/* Shoot Duration Slider */}
-                  {!PRICING.events[formData.eventType].isFlat && (
-                    <div className="space-y-3 pt-4 border-t border-warm-gray/20">
-                      <div className="flex justify-between items-center">
-                        <label htmlFor="duration-slider" className="text-[10px] font-bold tracking-[0.15em] text-charcoal/60 uppercase flex items-center gap-1.5">
-                          <span className="w-1 h-1 rounded-full bg-plum/40"></span>
-                          Shoot Duration
-                        </label>
-                        <span className="font-mono text-sm font-bold text-plum bg-plum/[0.06] px-3 py-1 rounded-lg border border-plum/10">
-                          {formData.duration} Day{formData.duration > 1 ? 's' : ''}
-                        </span>
-                      </div>
-                      <div className="relative pt-2">
-                        <input
-                          id="duration-slider"
-                          type="range"
-                          min="1"
-                          max="5"
-                          value={formData.duration}
-                          onChange={(e) => setFormData(prev => ({ ...prev, duration: parseInt(e.target.value) }))}
-                          className="w-full h-1.5 bg-warm-gray/50 rounded-lg appearance-none cursor-pointer accent-plum"
-                        />
-                        <div className="flex justify-between text-[10px] text-charcoal/35 font-mono mt-2.5 px-1">
-                          <span>1 Day</span>
-                          <span>2 Days</span>
-                          <span>3 Days</span>
-                          <span>4 Days</span>
-                          <span>5+ Days</span>
-                        </div>
-                      </div>
-                    </div>
-                  )}
-                </motion.div>
-              )}
-
-              {/* STEP 3: CREW COVERAGE SERVICES */}
-              {currentStep === 2 && (
-                <motion.div
-                  initial={{ opacity: 0, x: 20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -20 }}
-                  transition={{ duration: 0.4 }}
-                  className="space-y-6"
-                >
-                  <div>
-                    <div className="flex items-center gap-3 mb-5">
-                      <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-plum/10 to-orchid/10 flex items-center justify-center border border-plum/10">
-                        <CheckCircle2 size={18} className="text-plum" />
-                      </div>
-                      <div>
-                        <h3 className="text-lg font-serif text-charcoal leading-tight">Select Creative Services</h3>
-                        <p className="text-[11px] text-charcoal/45 font-light">Base Candid Photography is always included</p>
-                      </div>
-                    </div>
-
-                    <div className="space-y-4">
-                      {Object.entries(PRICING.services).map(([key, service]) => {
-                        const serviceKey = key as keyof typeof formData.services;
-                        const isChecked = formData.services[serviceKey];
-                        const isFlat = 'flatPrice' in service;
-                        const priceText = isFlat
-                          ? `${formatCurrency((service as any).flatPrice)} flat`
-                          : `${formatCurrency((service as any).pricePerDay)} / day`;
-
-                        return (
-                          <div
-                            key={key}
-                            onClick={() => setFormData(prev => ({
-                              ...prev,
-                              services: {
-                                ...prev.services,
-                                [serviceKey]: !prev.services[serviceKey]
-                              }
-                            }))}
-                            className={`flex items-start gap-5 p-6 rounded-2xl border-2 transition-all duration-300 cursor-pointer ${
-                              isChecked 
-                                ? 'border-plum bg-plum/[0.02] shadow-[0_8px_30px_rgba(139,51,127,0.12)] -translate-y-1' 
-                                : 'border-warm-gray/30 bg-white hover:border-plum/30 hover:shadow-md hover:-translate-y-1'
-                            }`}
-                          >
-                            <div className="pt-0.5">
-                              <input
-                                type="checkbox"
-                                id={`service-${key}`}
-                                checked={isChecked}
-                                onChange={() => { }} // handled by div click
-                                className="w-4 h-4 rounded text-plum border-neutral-300 focus:ring-plum accent-plum cursor-pointer"
-                              />
-                            </div>
-                            <div className="flex-1">
-                              <div className="flex justify-between items-start gap-2">
-                                <label htmlFor={`service-${key}`} className="font-serif text-base font-bold text-obsidian cursor-pointer">
-                                  {service.name}
-                                </label>
-                                <span className="text-xs font-semibold text-plum font-mono whitespace-nowrap">
-                                  +{priceText}
+                {/* STEP 2: FORMAT */}
+                {currentStep === 1 && (
+                  <motion.div
+                    key="step1"
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    transition={{ duration: 0.4 }}
+                    className="space-y-6"
+                  >
+                    <div className="bg-white/80 backdrop-blur-md rounded-2xl p-6 sm:p-10 shadow-[0_4px_20px_rgb(0,0,0,0.03)] border border-white">
+                      <h3 className="text-xl md:text-2xl font-serif italic text-obsidian mb-8">
+                        <span className="font-sans not-italic text-sm text-charcoal/50 uppercase tracking-[0.2em] font-semibold block mb-2">Choose</span>
+                        Format
+                      </h3>
+                      
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        {(Object.keys(PRICING.events) as EventType[]).map((type) => {
+                          const evt = PRICING.events[type];
+                          const isSelected = formData.eventType === type;
+                          const numStr = type === 'wedding' ? 'ONE' : type === 'prewedding' ? 'TWO' : type === 'engagement' ? 'THREE' : 'FOUR';
+                          
+                          return (
+                            <button
+                              key={type}
+                              type="button"
+                              onClick={() => setFormData(prev => ({ ...prev, eventType: type }))}
+                              className={`flex flex-col p-6 rounded-xl border-2 text-left transition-all duration-300 relative group cursor-pointer h-full ${
+                                isSelected 
+                                  ? 'border-obsidian bg-white shadow-md' 
+                                  : 'border-transparent bg-ivory/50 hover:bg-ivory hover:border-warm-gray/40'
+                              }`}
+                            >
+                              <div className="flex justify-between items-center w-full mb-3">
+                                <span className="text-[8px] font-bold uppercase tracking-[0.2em] text-charcoal/40">
+                                  COLLECTION {numStr}
                                 </span>
+                                {isSelected && (
+                                  <div className="w-1.5 h-1.5 rounded-full bg-obsidian"></div>
+                                )}
                               </div>
-                              <p className="text-xs text-charcoal/60 leading-relaxed font-light mt-1">
-                                {service.desc}
-                              </p>
+                              <span className="font-serif text-base font-bold text-obsidian mb-3">
+                                {evt.name}
+                              </span>
+                              <span className="text-[11px] text-charcoal/50 leading-relaxed font-light mb-4 flex-grow">
+                                {evt.desc}
+                              </span>
+                              
+                              {isSelected && (
+                                <div className="mt-auto text-[8px] font-bold uppercase tracking-widest flex items-center gap-2">
+                                  SELECTED <ArrowRight size={10} />
+                                </div>
+                              )}
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+
+                    {/* Timeline Slider */}
+                    {!PRICING.events[formData.eventType].isFlat && (
+                      <div className="bg-white/80 backdrop-blur-md rounded-2xl p-6 sm:p-10 shadow-[0_4px_20px_rgb(0,0,0,0.03)] border border-white">
+                        <div className="flex justify-between items-end mb-8">
+                          <h3 className="text-xl md:text-2xl font-serif italic text-obsidian">
+                            <span className="font-sans not-italic text-[10px] text-charcoal/50 uppercase tracking-[0.2em] font-bold block mb-2">Duration</span>
+                            Coverage <span className="font-bold font-serif not-italic">Timeline</span>
+                          </h3>
+                          <div className="bg-ivory px-4 py-2 rounded-full border border-warm-gray/50 flex items-center gap-2">
+                            <span className="font-serif italic font-bold text-obsidian">{formData.duration}</span>
+                            <span className="text-[9px] uppercase tracking-widest font-bold text-charcoal/60">Days</span>
+                          </div>
+                        </div>
+
+                        <div className="px-2 pt-4 pb-8">
+                          <div className="relative h-1 bg-warm-gray rounded-full">
+                            <div 
+                              className="absolute top-0 left-0 h-full bg-obsidian rounded-full transition-all duration-300"
+                              style={{ width: `${((formData.duration - 1) / 4) * 100}%` }}
+                            ></div>
+                            <input
+                              type="range"
+                              id="duration-slider"
+                              min="1"
+                              max="5"
+                              step="1"
+                              value={formData.duration}
+                              onChange={(e) => setFormData(prev => ({ ...prev, duration: parseInt(e.target.value) }))}
+                              className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                            />
+                            {/* Thumb indicator visual */}
+                            <div 
+                              className="absolute top-1/2 -translate-y-1/2 w-4 h-4 bg-obsidian rounded-full shadow-md transition-all duration-300 pointer-events-none"
+                              style={{ left: `calc(${((formData.duration - 1) / 4) * 100}% - 8px)` }}
+                            ></div>
+                            
+                            {/* Ticks */}
+                            <div className="absolute top-6 left-0 right-0 flex justify-between px-1">
+                              {[1, 2, 3, 4, 5].map(val => (
+                                <span key={val} className="text-[8px] uppercase tracking-widest text-charcoal/40 font-semibold cursor-pointer" onClick={() => setFormData(prev => ({ ...prev, duration: val }))}>
+                                  {val === 1 ? 'SINGLE DAY' : val === 5 ? 'FIVE+ DAYS' : `${val === 2 ? 'TWO' : val === 3 ? 'THREE' : 'FOUR'} DAYS`}
+                                </span>
+                              ))}
                             </div>
                           </div>
-                        );
-                      })}
-                    </div>
-                  </div>
-
-                  {/* Art Books Counter */}
-                  <div className="pt-6 border-t border-warm-gray/30 flex flex-col sm:flex-row justify-between sm:items-center gap-4">
-                    <div>
-                      <h4 className="font-serif text-base font-bold text-obsidian flex items-center gap-2">
-                        {PRICING.albums.name}
-                      </h4>
-                      <p className="text-xs text-charcoal/50 font-light mt-0.5">
-                        High-quality physical legacy art books (+{formatCurrency(PRICING.albums.unitPrice)} each)
-                      </p>
-                    </div>
-                    <div className="flex items-center gap-3">
-                      <button
-                        type="button"
-                        onClick={() => setFormData(prev => ({ ...prev, albumCount: Math.max(0, prev.albumCount - 1) }))}
-                        className="w-10 h-10 rounded-full border border-warm-gray flex items-center justify-center text-charcoal hover:border-plum hover:text-plum font-semibold transition-colors duration-300 cursor-pointer"
-                      >
-                        -
-                      </button>
-                      <span className="font-mono text-base font-bold w-6 text-center text-obsidian">
-                        {formData.albumCount}
-                      </span>
-                      <button
-                        type="button"
-                        onClick={() => setFormData(prev => ({ ...prev, albumCount: prev.albumCount + 1 }))}
-                        className="w-10 h-10 rounded-full border border-warm-gray flex items-center justify-center text-charcoal hover:border-plum hover:text-plum font-semibold transition-colors duration-300 cursor-pointer"
-                      >
-                        +
-                      </button>
-                    </div>
-                  </div>
-                </motion.div>
-              )}
-
-              {/* STEP 4: LOGISTICS & SCALE & NOTES */}
-              {currentStep === 3 && (
-                <motion.div
-                  initial={{ opacity: 0, x: 20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -20 }}
-                  transition={{ duration: 0.4 }}
-                  className="space-y-8"
-                >
-                  {/* Guest scale */}
-                  <div>
-                    <div className="flex items-center gap-3 mb-5">
-                      <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-plum/10 to-orchid/10 flex items-center justify-center border border-plum/10">
-                        <User size={18} className="text-plum" />
+                        </div>
                       </div>
-                      <div>
-                        <h3 className="text-lg font-serif text-charcoal leading-tight">Guest Scale & Crew Staffing</h3>
-                        <p className="text-[11px] text-charcoal/45 font-light">Larger events require additional creative professionals</p>
-                      </div>
-                    </div>
-
-                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                      {(Object.keys(PRICING.scale) as ScaleType[]).map((scKey) => {
-                        const sc = PRICING.scale[scKey];
-                        const isSelected = formData.scale === scKey;
-                        return (
-                          <button
-                            key={scKey}
-                            type="button"
-                            onClick={() => setFormData(prev => ({ ...prev, scale: scKey }))}
-                            className={`flex flex-col p-5 rounded-xl border text-left transition-all duration-300 relative cursor-pointer ${isSelected
-                                ? 'border-plum bg-plum/[0.03] shadow-[0_4px_20px_rgba(139,51,127,0.08)] ring-1 ring-plum/20'
-                                : 'border-warm-gray hover:border-plum/40 hover:bg-ivory/30 hover:shadow-md hover:-translate-y-0.5'
-                              }`}
-                          >
-                            <span className="text-[10px] tracking-wider uppercase font-semibold text-charcoal/40 mb-1">
-                              {scKey === 'intimate' ? '01 / Intimate' : scKey === 'medium' ? '02 / Medium' : '03 / Grand'}
-                            </span>
-                            <span className="font-serif text-sm font-bold text-obsidian mb-2">
-                              {sc.name}
-                            </span>
-                            <span className="text-[10px] bg-warm-gray/40 text-charcoal/70 px-2 py-0.5 rounded font-mono inline-block w-fit mt-1">
-                              {sc.crewBonus}
-                            </span>
-                          </button>
-                        );
-                      })}
-                    </div>
-                  </div>
-
-                  {/* Destination Location */}
-                  <div className="pt-6 border-t border-warm-gray/30">
-                    <div className="flex items-center gap-3 mb-5">
-                      <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-plum/10 to-orchid/10 flex items-center justify-center border border-plum/10">
-                        <ArrowRight size={18} className="text-plum" />
-                      </div>
-                      <div>
-                        <h3 className="text-lg font-serif text-charcoal leading-tight">Celebration Destination</h3>
-                        <p className="text-[11px] text-charcoal/45 font-light">Logistics mapped to your venue distance</p>
-                      </div>
-                    </div>
-
-                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                      {(Object.keys(PRICING.locations) as LocationType[]).map((locKey) => {
-                        const loc = PRICING.locations[locKey];
-                        const isSelected = formData.location === locKey;
-                        return (
-                          <button
-                            key={locKey}
-                            type="button"
-                            onClick={() => setFormData(prev => ({ ...prev, location: locKey }))}
-                            className={`flex flex-col p-5 rounded-xl border text-left transition-all duration-300 relative cursor-pointer ${isSelected
-                                ? 'border-plum bg-plum/[0.03] shadow-[0_4px_20px_rgba(139,51,127,0.08)] ring-1 ring-plum/20'
-                                : 'border-warm-gray hover:border-plum/40 hover:bg-ivory/30 hover:shadow-md hover:-translate-y-0.5'
-                              }`}
-                          >
-                            <span className="text-[10px] font-semibold text-plum font-mono mb-1">
-                              {loc.price === 0 ? 'Inc.' : `+${formatCurrency(loc.price)}`}
-                            </span>
-                            <span className="font-serif text-sm font-bold text-obsidian">
-                              {loc.name}
-                            </span>
-                          </button>
-                        );
-                      })}
-                    </div>
-                  </div>
-
-                  {/* Notes */}
-                  <div className="pt-6 border-t border-warm-gray/20 flex flex-col relative group">
-                    <label htmlFor="notes" className="text-[10px] uppercase tracking-[0.2em] text-charcoal/50 mb-2.5 font-semibold flex items-center gap-1.5">
-                      <span className="w-1 h-1 rounded-full bg-plum/40"></span>
-                      Creative Vision / Special Notes
-                    </label>
-                    <div className="relative">
-                      <div className="absolute left-0 top-0 bottom-0 w-[3px] rounded-full bg-gradient-to-b from-plum/0 via-plum/0 to-plum/0 group-focus-within:from-plum group-focus-within:via-orchid group-focus-within:to-plum/30 transition-all duration-500"></div>
-                      <textarea
-                        id="notes"
-                        name="notes"
-                        rows={3}
-                        value={formData.notes}
-                        onChange={handleInputChange}
-                        placeholder="Tell us about the dream locations, theme, or custom scheduling setups..."
-                        className="w-full bg-ivory/60 border border-warm-gray/40 rounded-xl p-4 pl-4 text-sm text-charcoal placeholder:text-charcoal/25 focus:outline-none focus:border-plum/50 focus:ring-2 focus:ring-plum/10 focus:bg-white transition-all duration-300 resize-none hover:border-warm-gray/70"
-                      />
-                    </div>
-                  </div>
-                </motion.div>
-              )}
-
-              {/* Navigation Action Panel */}
-              <div className="flex flex-col-reverse sm:flex-row justify-between items-stretch sm:items-center gap-3 sm:gap-0 pt-5 border-t border-warm-gray/20">
-                <button
-                  type="button"
-                  onClick={handlePrevStep}
-                  className={`inline-flex items-center justify-center sm:justify-start gap-2 text-[10px] font-bold uppercase tracking-[0.15em] text-charcoal/50 hover:text-plum py-2 sm:py-0 transition-all duration-300 cursor-pointer group ${currentStep === 0 ? 'hidden sm:invisible sm:flex sm:pointer-events-none' : 'flex'
-                    }`}
-                >
-                  <ArrowLeft size={12} className="group-hover:-translate-x-0.5 transition-transform duration-300" /> Back
-                </button>
-
-                {currentStep < steps.length - 1 ? (
-                  <button
-                    type="button"
-                    onClick={handleNextStep}
-                    className="inline-flex justify-center items-center gap-3 bg-obsidian hover:bg-gradient-to-r hover:from-plum hover:to-orchid text-white px-6 py-3 rounded-full text-[10px] font-bold uppercase tracking-[0.2em] transition-all duration-400 shadow-xl hover:shadow-[0_10px_30px_rgba(139,51,127,0.3)] hover:-translate-y-0.5 cursor-pointer w-full sm:w-auto group"
-                  >
-                    {currentStep > 0 && <span className="mr-2 border-r border-white/15 pr-3 font-mono text-[11px]">{formatCurrency(pricingSummary.grandTotal)}</span>}
-                    Next Step <ArrowRight size={13} className="group-hover:translate-x-0.5 transition-transform duration-300" />
-                  </button>
-                ) : (
-                  <button
-                    type="submit"
-                    disabled={isSubmitting}
-                    className="inline-flex justify-center items-center gap-2 bg-gradient-to-r from-plum to-orchid text-white px-6 py-3 rounded-full text-[10px] font-bold uppercase tracking-[0.2em] transition-all duration-500 shadow-lg hover:shadow-[0_12px_28px_rgba(139,51,127,0.3)] hover:-translate-y-0.5 disabled:opacity-50 disabled:hover:translate-y-0 cursor-pointer w-full sm:w-auto"
-                  >
-                    {isSubmitting ? 'Submitting...' : 'Submit Inquiry'}
-                  </button>
+                    )}
+                  </motion.div>
                 )}
-              </div>
-            </form>
-          </div>
 
-          {/* Right Column: Live Estimate Summary Card */}
-          <div className="lg:col-span-5 lg:sticky lg:top-24 mt-6 lg:mt-0">
-            <div className="bg-gradient-to-br from-[#0f0a14] via-obsidian to-[#1a1025] text-white rounded-2xl p-6 md:p-7 border border-white/[0.08] shadow-[0_30px_80px_-20px_rgba(139,51,127,0.25)] relative overflow-hidden">
-              {/* Lock Overlay when on Step 1 (currentStep === 0) */}
-              <AnimatePresence>
-                {currentStep === 0 && (
+                {currentStep > 1 && (
                   <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    className="absolute inset-0 bg-obsidian/95 backdrop-blur-xl z-20 flex flex-col items-center justify-center text-center p-6 select-none"
+                    key={`step${currentStep}`}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    transition={{ duration: 0.4 }}
+                    className="bg-white/80 backdrop-blur-md rounded-2xl p-6 sm:p-10 shadow-[0_4px_20px_rgb(0,0,0,0.03)] border border-white"
                   >
-                    <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-plum/20 to-orchid/10 flex items-center justify-center text-orchid mb-5 border border-orchid/20 shadow-[0_0_30px_rgba(218,112,214,0.2)]">
-                      <Lock size={22} className="text-orchid animate-pulse" />
+                    <div className="mb-8">
+                      <h3 className="text-xl md:text-2xl font-serif italic text-obsidian mb-2">{steps[currentStep].title}</h3>
+                      <p className="text-xs text-charcoal/50 uppercase tracking-widest font-semibold">{steps[currentStep].subtitle}</p>
                     </div>
-                    <h4 className="font-serif text-lg text-white tracking-wide mb-2">
-                      Calculator Locked
-                    </h4>
-                    <p className="text-[11px] text-white/45 max-w-[240px] leading-relaxed font-light font-sans">
-                      Enter your details to unlock the investment estimator.
-                    </p>
+
+                    {currentStep === 2 ? (
+                      // STEP 3: SERVICES
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        {(Object.keys(PRICING.services) as ServiceType[]).map((srvKey) => {
+                          const srv = PRICING.services[srvKey];
+                          const isSelected = formData.services[srvKey];
+                          return (
+                            <button
+                              key={srvKey}
+                              type="button"
+                              onClick={() => setFormData(prev => ({
+                                ...prev,
+                                services: { ...prev.services, [srvKey]: !prev.services[srvKey] }
+                              }))}
+                              className={`flex justify-between items-center p-5 rounded-xl border text-left transition-all duration-300 ${isSelected ? 'border-obsidian bg-white shadow-md' : 'border-warm-gray/40 bg-ivory/50 hover:bg-ivory'}`}
+                            >
+                              <div>
+                                <span className="block font-serif text-sm font-bold text-obsidian mb-1">{srv.name}</span>
+                                <span className="block text-[10px] text-charcoal/50 font-light">{srv.desc}</span>
+                              </div>
+                              <div className={`w-5 h-5 rounded-full flex items-center justify-center border transition-all ${isSelected ? 'bg-obsidian border-obsidian text-white' : 'border-warm-gray/80 text-transparent'}`}>
+                                <Check size={12} strokeWidth={3} />
+                              </div>
+                            </button>
+                          )
+                        })}
+                      </div>
+                    ) : (
+                      // STEP 4: LOGISTICS
+                      <div className="space-y-8">
+                        <div>
+                          <p className="text-[10px] uppercase tracking-[0.2em] font-semibold mb-4 text-charcoal/60">Location Logistics</p>
+                          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                            {(Object.keys(PRICING.locations) as LocationType[]).map((locKey) => {
+                              const loc = PRICING.locations[locKey];
+                              const isSelected = formData.location === locKey;
+                              return (
+                                <button
+                                  key={locKey}
+                                  type="button"
+                                  onClick={() => setFormData(prev => ({ ...prev, location: locKey }))}
+                                  className={`p-4 rounded-xl border text-center transition-all duration-300 ${isSelected ? 'border-obsidian bg-white shadow-md' : 'border-warm-gray/40 bg-ivory/50 hover:bg-ivory'}`}
+                                >
+                                  <span className="block font-serif text-sm font-bold mb-1 text-obsidian">{loc.name}</span>
+                                </button>
+                              )
+                            })}
+                          </div>
+                        </div>
+
+                        <div>
+                          <label htmlFor="notes" className="text-[10px] uppercase tracking-[0.2em] font-semibold mb-3 block text-charcoal/60">Creative Vision Notes</label>
+                          <textarea
+                            id="notes"
+                            name="notes"
+                            rows={3}
+                            value={formData.notes}
+                            onChange={handleInputChange}
+                            placeholder="Tell us your dreams..."
+                            className="w-full bg-transparent border-b border-warm-gray focus:border-obsidian py-3 text-sm text-obsidian focus:outline-none transition-colors resize-none"
+                          />
+                        </div>
+                      </div>
+                    )}
                   </motion.div>
                 )}
               </AnimatePresence>
 
-              {/* Ambient glow effects */}
-              <div className="absolute -top-20 -right-20 w-40 h-40 bg-plum/15 rounded-full blur-[60px] pointer-events-none"></div>
-              <div className="absolute -bottom-16 -left-16 w-32 h-32 bg-orchid/10 rounded-full blur-[50px] pointer-events-none"></div>
-
-              {/* Shimmer top border */}
-              <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-orchid to-transparent opacity-80"></div>
-
-              {/* Header */}
-              <div className="flex justify-between items-center mb-5">
-                <div className="flex items-center gap-2.5">
-                  <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-plum/30 to-orchid/20 flex items-center justify-center border border-white/10">
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" className="text-orchid">
-                      <path d="M12 2L14.5 9.5L22 12L14.5 14.5L12 22L9.5 14.5L2 12L9.5 9.5L12 2Z" fill="currentColor" />
-                    </svg>
-                  </div>
-                  <h3 className="font-serif text-base tracking-wide text-white/95">
-                    Investment Summary
-                  </h3>
-                </div>
-                <span className="font-mono text-[9px] tracking-widest bg-white/[0.07] text-orchid/70 px-2 py-0.5 rounded-md border border-white/[0.06]">
-                  {quoteId}
-                </span>
-              </div>
-
-              {/* Package Details Itemized list */}
-              <div className="space-y-2.5 mb-5 border-b border-white/[0.07] pb-5 text-[11px] text-white/70">
-
-                {/* Event Base item */}
-                <div className="flex justify-between items-start gap-3">
-                  <div className="flex items-start gap-2">
-                    <span className="w-1.5 h-1.5 rounded-full bg-gradient-to-br from-plum to-orchid mt-1.5 shrink-0"></span>
-                    <div>
-                      <span className="font-semibold block text-white text-xs">
-                        {PRICING.events[formData.eventType].name}
-                      </span>
-                      <span className="text-white/35 block text-[10px]">
-                        {PRICING.events[formData.eventType].isFlat ? 'Flat rate' : `${formData.duration} Day(s) coverage`}
-                      </span>
-                    </div>
-                  </div>
-                  <span className="font-mono font-semibold text-white text-xs">
-                    {formatCurrency(pricingSummary.basePriceTotal)}
-                  </span>
-                </div>
-
-                {/* Selected services list */}
-                {Object.entries(formData.services).some(([_, val]) => val) && (
-                  <div className="space-y-1.5 pt-2.5 border-t border-white/[0.05]">
-                    <span className="text-[9px] uppercase tracking-[0.15em] text-orchid/50 block font-bold">Crew Additions</span>
-                    {formData.services.cinematicVideo && (
-                      <div className="flex justify-between items-center pl-3.5">
-                        <span className="text-white/55">Cinematic Film & Teaser</span>
-                        <span className="font-mono text-white/75">
-                          +{formatCurrency(PRICING.services.cinematicVideo.pricePerDay * (PRICING.events[formData.eventType].isFlat ? 1 : formData.duration))}
-                        </span>
-                      </div>
-                    )}
-                    {formData.services.traditionalPhoto && (
-                      <div className="flex justify-between items-center pl-3.5">
-                        <span className="text-white/55">Traditional Coverage</span>
-                        <span className="font-mono text-white/75">
-                          +{formatCurrency(PRICING.services.traditionalPhoto.pricePerDay * formData.duration)}
-                        </span>
-                      </div>
-                    )}
-                    {formData.services.droneAerial && (
-                      <div className="flex justify-between items-center pl-3.5">
-                        <span className="text-white/55">Drone Aerial Video</span>
-                        <span className="font-mono text-white/75">
-                          +{formatCurrency(PRICING.services.droneAerial.pricePerDay * formData.duration)}
-                        </span>
-                      </div>
-                    )}
-                    {formData.services.sameDayEdit && (
-                      <div className="flex justify-between items-center pl-3.5">
-                        <span className="text-white/55">Same-Day Edit Video</span>
-                        <span className="font-mono text-white/75">
-                          +{formatCurrency(PRICING.services.sameDayEdit.flatPrice)}
-                        </span>
-                      </div>
-                    )}
-                  </div>
-                )}
-
-                {/* Legacy Albums item */}
-                {formData.albumCount > 0 && (
-                  <div className="flex justify-between items-center pt-2 border-t border-white/[0.05] pl-3.5">
-                    <span className="text-white/55">{formData.albumCount} x Legacy Album(s)</span>
-                    <span className="font-mono text-white/75">
-                      +{formatCurrency(pricingSummary.albumsTotal)}
-                    </span>
-                  </div>
-                )}
-
-                {/* Guest Scale item */}
-                {formData.scale !== 'intimate' && (
-                  <div className="flex justify-between items-center pt-2 border-t border-white/[0.05] pl-3.5">
-                    <span className="text-white/55">Scale: {PRICING.scale[formData.scale].name}</span>
-                    <span className="font-mono text-white/75">
-                      +{formatCurrency(pricingSummary.scalePrice)}
-                    </span>
-                  </div>
-                )}
-
-                {/* Location logistics item */}
-                {formData.location !== 'local' && (
-                  <div className="flex justify-between items-center pt-2 border-t border-white/[0.05] pl-3.5">
-                    <span className="text-white/55">Logistics: {PRICING.locations[formData.location].name}</span>
-                    <span className="font-mono text-white/75">
-                      +{formatCurrency(pricingSummary.logisticsPrice)}
-                    </span>
-                  </div>
-                )}
-              </div>
-
-              {/* Crew Recommendations Widget */}
-              <div className="bg-gradient-to-br from-white/[0.06] to-white/[0.02] rounded-xl p-3.5 mb-5 text-[11px] text-white/80 space-y-2 border border-white/[0.06]">
-                <span className="text-[9px] uppercase tracking-[0.15em] text-orchid/50 block font-bold">Production Crew</span>
-                <ul className="space-y-1 font-sans font-light">
-                  {getCrewComposition().map((member, i) => (
-                    <li key={i} className="flex items-center gap-2">
-                      <span className="w-1 h-1 rounded-full bg-orchid shadow-[0_0_4px_rgba(230,104,179,0.6)]"></span>
-                      <span className="text-white/70">{member}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-
-              {/* Grand Total Counter — Glowing display */}
-              <div className="relative mb-5">
-                <div className="bg-gradient-to-r from-plum/15 via-orchid/10 to-plum/15 rounded-xl p-4 border border-orchid/15 relative overflow-hidden">
-                  {/* Animated shimmer */}
-                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/[0.03] to-transparent animate-[shimmer_3s_ease-in-out_infinite]"></div>
-                  <span className="text-[9px] uppercase tracking-[0.2em] text-orchid/60 block font-bold mb-1.5 relative">Estimated Investment</span>
-                  <div className="flex items-baseline gap-2 relative">
-                    <span className="text-2xl md:text-3xl font-serif font-bold text-transparent bg-clip-text bg-gradient-to-r from-orchid via-[#f0a0d0] to-orchid tracking-tight">
-                      {formatCurrency(pricingSummary.grandTotal)}
-                    </span>
-                    <span className="text-orchid/50 text-[9px] uppercase font-mono">INR</span>
-                  </div>
-                  <p className="text-[9px] text-white/30 leading-relaxed italic mt-1 relative">
-                    *Excludes travel/lodging for destination shoots.
-                  </p>
-                </div>
-              </div>
-
-              {/* Action Buttons */}
-              <div className="flex gap-3">
+              {/* NAVIGATION BUTTONS */}
+              <div className="flex items-center justify-between mt-2">
                 <button
                   type="button"
-                  onClick={triggerPdfDownload}
-                  className="flex-1 inline-flex items-center justify-center gap-1.5 bg-white/[0.07] hover:bg-white/[0.12] text-white/80 py-3 rounded-xl text-[10px] font-semibold tracking-widest uppercase transition-all duration-300 border border-white/[0.08] cursor-pointer hover:border-white/15"
+                  onClick={handlePrevStep}
+                  className={`flex items-center gap-2 text-[10px] uppercase tracking-widest font-bold text-charcoal/60 hover:text-obsidian transition-colors ${currentStep === 0 ? 'invisible' : 'visible'}`}
                 >
-                  <Download size={12} /> PDF
+                  <ArrowLeft size={14} /> Back
                 </button>
-                {currentStep < steps.length - 1 ? (
-                  <button
-                    type="button"
-                    onClick={() => setCurrentStep(3)}
-                    className="flex-[2] inline-flex items-center justify-center gap-2 bg-gradient-to-r from-plum to-orchid text-white py-3 rounded-xl text-[10px] font-bold tracking-widest uppercase transition-all duration-300 hover:shadow-[0_8px_25px_rgba(230,104,179,0.3)] shadow-lg cursor-pointer hover:-translate-y-0.5 border border-orchid/20"
-                  >
-                    Lock Estimate
-                  </button>
-                ) : (
-                  <button
-                    type="button"
-                    onClick={handleSubmit}
-                    disabled={isSubmitting}
-                    className="flex-[2] inline-flex items-center justify-center gap-2 bg-gradient-to-r from-plum to-orchid text-white py-3 rounded-xl text-[10px] font-bold tracking-widest uppercase transition-all duration-300 hover:shadow-[0_8px_25px_rgba(230,104,179,0.3)] shadow-lg cursor-pointer hover:-translate-y-0.5 border border-orchid/20"
-                  >
-                    {isSubmitting ? 'Securing...' : 'Secure Date'}
-                  </button>
-                )}
+
+                <div className="flex gap-3 sm:gap-4">
+                  {currentStep === steps.length - 1 && (
+                     <button
+                       type="button"
+                       onClick={triggerPdfDownload}
+                       className="px-4 sm:px-6 py-3 rounded-full border border-warm-gray bg-white/50 hover:bg-white text-[10px] uppercase tracking-widest font-bold text-obsidian transition-colors shadow-sm"
+                     >
+                       <span className="hidden sm:inline">Download</span> PDF
+                     </button>
+                  )}
+
+                  {currentStep < steps.length - 1 && (
+                    <button
+                      type="button"
+                      onClick={handleNextStep}
+                      className="px-6 sm:px-8 py-3 rounded-full bg-obsidian text-white text-[10px] uppercase tracking-widest font-bold hover:bg-charcoal transition-colors flex items-center gap-2 shadow-lg"
+                    >
+                      Next Step <ArrowRight size={14} />
+                    </button>
+                  )}
+                </div>
               </div>
-            </div>
+
+            </form>
           </div>
 
         </div>
-
       </div>
     </section>
   );
