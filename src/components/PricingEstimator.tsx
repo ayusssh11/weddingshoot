@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  Calendar, ArrowRight, ArrowLeft, Check, Download, 
+import {
+  Calendar, ArrowRight, ArrowLeft, Check, Download,
   Mail, Phone, User, CheckCircle2, AlertCircle, Lock
 } from 'lucide-react';
 
@@ -146,7 +146,7 @@ export function PricingEstimator() {
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
-    
+
     // Clear error dynamically as user types
     if (touched[name]) {
       const error = validateField(name, value);
@@ -158,10 +158,10 @@ export function PricingEstimator() {
   const calculateTotal = () => {
     const eventConfig = PRICING.events[formData.eventType];
     const durationMultiplier = eventConfig.isFlat ? 1 : formData.duration;
-    
+
     // 1. Base Price
     const basePriceTotal = eventConfig.basePrice * durationMultiplier;
-    
+
     // 2. Services Add-ons
     let servicesTotal = 0;
     if (formData.services.cinematicVideo) {
@@ -307,7 +307,7 @@ export function PricingEstimator() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     // Validate contact fields just in case
     const nameErr = validateField('fullName', formData.fullName);
     const emailErr = validateField('email', formData.email);
@@ -346,8 +346,8 @@ export function PricingEstimator() {
   };
 
   return (
-    <section className="bg-ivory py-16 md:py-24 relative overflow-hidden" id="estimator">
-      
+    <section className="bg-ivory py-12 sm:py-16 md:py-24 relative overflow-hidden" id="estimator">
+
       {/* Stylesheet specifically for printing a clean branded invoice */}
       <style>{`
         @media print {
@@ -375,14 +375,14 @@ export function PricingEstimator() {
       {/* Hidden Invoice sheet - rendered in absolute but transparent/hidden until print */}
       {isMounted && createPortal(
         <div id="print-invoice-sheet" className="hidden print:block bg-white p-12 text-[#120D16] max-w-4xl mx-auto font-sans leading-relaxed border border-warm-gray">
-          
+
           {/* Header */}
           <div className="flex justify-between items-start border-b border-warm-gray pb-8 mb-8">
             <div>
-              <img 
-                src="https://weddingshoot.in/wp-content/uploads/Wedding-Shoot-Logo-01.png" 
-                alt="Wedding Shoot Logo" 
-                className="h-16 w-auto object-contain mb-4" 
+              <img
+                src="https://weddingshoot.in/wp-content/uploads/Wedding-Shoot-Logo-01.png"
+                alt="Wedding Shoot Logo"
+                className="h-16 w-auto object-contain mb-4"
               />
               <p className="font-serif italic text-lg text-charcoal">Fine Art Wedding Storytellers</p>
               <p className="text-xs text-charcoal/60 mt-1">Gurgaon, Haryana, India | amanstudio78@gmail.com | +91 8700609950</p>
@@ -421,7 +421,7 @@ export function PricingEstimator() {
               </tr>
             </thead>
             <tbody className="text-sm">
-              
+
               {/* Base Event Price */}
               <tr className="border-b border-warm-gray/30">
                 <td className="py-4 font-medium">
@@ -611,18 +611,18 @@ export function PricingEstimator() {
       )}
 
       {/* Interactive Estimator Layout */}
-      <div className="container mx-auto px-6 md:px-12 relative z-10 no-print">
-        
+      <div className="container mx-auto px-4 sm:px-6 lg:px-12 relative z-10 no-print">
+
         {/* Glow Effects */}
         <div className="absolute -top-32 -left-32 w-[500px] h-[500px] bg-orchid/5 rounded-full blur-[120px] pointer-events-none -z-10"></div>
         <div className="absolute -bottom-32 -right-32 w-[500px] h-[500px] bg-plum/5 rounded-full blur-[120px] pointer-events-none -z-10"></div>
 
         {/* Section Header */}
-        <div className="text-center max-w-2xl mx-auto mb-16">
+        <div className="text-center max-w-2xl mx-auto mb-10 sm:mb-16 px-2">
           <span className="text-[10px] tracking-[0.35em] text-plum uppercase font-sans font-bold inline-block mb-3">
             Legacy Commissions
           </span>
-          <h2 className="font-serif text-4xl md:text-5xl text-obsidian leading-tight">
+          <h2 className="font-serif text-3xl sm:text-4xl md:text-5xl text-obsidian leading-tight">
             Tailor Your Investment
           </h2>
           <p className="text-charcoal/60 text-sm md:text-base font-light mt-4">
@@ -632,18 +632,17 @@ export function PricingEstimator() {
 
         {/* Layout Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
-          
+
           {/* Left Column: Multi-Step Interactive Form */}
-          <div className="lg:col-span-7 bg-white rounded-2xl p-8 md:p-10 border border-warm-gray/40 shadow-xl relative overflow-hidden bg-clip-padding before:absolute before:inset-0 before:p-[1px] before:bg-gradient-to-br before:from-plum/10 before:to-orchid/15 before:-z-10 before:rounded-2xl before:content-['']">
+          <div className="lg:col-span-7 bg-white rounded-[2rem] p-6 sm:p-8 md:p-12 border border-warm-gray/20 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.05)] relative overflow-hidden">
             
             {/* Form Progress Header */}
-            <div className="flex justify-between items-center mb-10 pb-6 border-b border-warm-gray/40" aria-label="Progress">
+            <div className="flex justify-between items-start sm:items-center mb-8 sm:mb-12 pb-8 border-b border-warm-gray/30 gap-2 sm:gap-0 overflow-x-auto hide-scrollbar" aria-label="Progress">
               {steps.map((s, index) => (
-                <div 
-                  key={index} 
-                  className={`flex flex-col items-center flex-1 text-center relative ${
-                    index < steps.length - 1 ? "after:content-[''] after:h-[1px] after:bg-warm-gray/50 after:w-full after:absolute after:top-4 after:left-1/2 after:-z-10" : ""
-                  }`}
+                <div
+                  key={index}
+                  className={`flex flex-col items-center flex-1 text-center relative ${index < steps.length - 1 ? "after:content-[''] after:h-[1px] after:bg-warm-gray/50 after:w-full after:absolute after:top-4 after:left-1/2 after:-z-10" : ""
+                    }`}
                   aria-current={currentStep === index ? "step" : undefined}
                 >
                   <button
@@ -675,17 +674,17 @@ export function PricingEstimator() {
                         }
                       }
                     }}
-                    className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-semibold transition-all duration-500 ${
+                    className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold transition-all duration-500 z-10 relative ${
                       currentStep === index 
-                        ? 'bg-gradient-to-r from-plum to-orchid text-white shadow-lg ring-4 ring-orchid/20 scale-110' 
+                        ? 'bg-gradient-to-br from-plum to-orchid text-white shadow-[0_8px_20px_rgba(218,112,214,0.3)] ring-4 ring-orchid/10 scale-110' 
                         : currentStep > index 
-                          ? 'bg-plum text-white' 
-                          : 'bg-warm-gray/40 text-charcoal/50 hover:bg-warm-gray/60'
+                          ? 'bg-obsidian text-white shadow-md' 
+                          : 'border-2 border-warm-gray/50 bg-white text-charcoal/40 hover:border-charcoal/30 hover:text-charcoal/60'
                     }`}
                   >
                     {currentStep > index ? <Check size={14} /> : index + 1}
                   </button>
-                  <span className="text-[10px] tracking-wider uppercase font-semibold text-charcoal/80 mt-2 hidden sm:block">
+                  <span className={`text-[10px] tracking-wider uppercase font-semibold mt-2 hidden sm:block ${currentStep === index ? 'text-plum' : 'text-charcoal/60'}`}>
                     {s.title}
                   </span>
                 </div>
@@ -695,7 +694,7 @@ export function PricingEstimator() {
             {/* Success Overlay Panel */}
             <AnimatePresence>
               {submitted && (
-                <motion.div 
+                <motion.div
                   initial={{ opacity: 0, scale: 0.95 }}
                   animate={{ opacity: 1, scale: 1 }}
                   exit={{ opacity: 0 }}
@@ -756,7 +755,7 @@ export function PricingEstimator() {
             </AnimatePresence>
 
             <form onSubmit={handleSubmit} className="space-y-8">
-              
+
               {/* STEP 1: CONTACT DETAILS (UNLOCK ESTIMATOR) */}
               {currentStep === 0 && (
                 <motion.div
@@ -790,9 +789,8 @@ export function PricingEstimator() {
                           onBlur={handleBlur}
                           placeholder="Your full name"
                           aria-describedby={errors.fullName ? "fullName-error" : undefined}
-                          className={`w-full bg-ivory/50 border rounded-lg py-3 pl-10 pr-4 text-sm text-charcoal focus:outline-none focus:border-plum focus:ring-1 focus:ring-plum/30 transition-colors ${
-                            errors.fullName ? 'border-red-400 focus:border-red-400 focus:ring-red-100' : 'border-warm-gray/60'
-                          }`}
+                          className={`w-full bg-ivory/50 border rounded-lg py-3 pl-10 pr-4 text-sm text-charcoal focus:outline-none focus:border-plum focus:ring-1 focus:ring-plum/30 transition-colors ${errors.fullName ? 'border-red-400 focus:border-red-400 focus:ring-red-100' : 'border-warm-gray/60'
+                            }`}
                         />
                       </div>
                       {errors.fullName && touched.fullName && (
@@ -818,9 +816,8 @@ export function PricingEstimator() {
                           onBlur={handleBlur}
                           placeholder="your.email@domain.com"
                           aria-describedby={errors.email ? "email-error" : undefined}
-                          className={`w-full bg-ivory/50 border rounded-lg py-3 pl-10 pr-4 text-sm text-charcoal focus:outline-none focus:border-plum focus:ring-1 focus:ring-plum/30 transition-colors ${
-                            errors.email ? 'border-red-400 focus:border-red-400 focus:ring-red-100' : 'border-warm-gray/60'
-                          }`}
+                          className={`w-full bg-ivory/50 border rounded-lg py-3 pl-10 pr-4 text-sm text-charcoal focus:outline-none focus:border-plum focus:ring-1 focus:ring-plum/30 transition-colors ${errors.email ? 'border-red-400 focus:border-red-400 focus:ring-red-100' : 'border-warm-gray/60'
+                            }`}
                         />
                       </div>
                       {errors.email && touched.email && (
@@ -847,9 +844,8 @@ export function PricingEstimator() {
                           onBlur={handleBlur}
                           placeholder="+91 XXXXX XXXXX"
                           aria-describedby={errors.phone ? "phone-error" : undefined}
-                          className={`w-full bg-ivory/50 border rounded-lg py-3 pl-10 pr-4 text-sm text-charcoal focus:outline-none focus:border-plum focus:ring-1 focus:ring-plum/30 transition-colors ${
-                            errors.phone ? 'border-red-400 focus:border-red-400 focus:ring-red-100' : 'border-warm-gray/60'
-                          }`}
+                          className={`w-full bg-ivory/50 border rounded-lg py-3 pl-10 pr-4 text-sm text-charcoal focus:outline-none focus:border-plum focus:ring-1 focus:ring-plum/30 transition-colors ${errors.phone ? 'border-red-400 focus:border-red-400 focus:ring-red-100' : 'border-warm-gray/60'
+                            }`}
                         />
                       </div>
                       {errors.phone && touched.phone && (
@@ -873,9 +869,8 @@ export function PricingEstimator() {
                           onChange={handleInputChange}
                           onBlur={handleBlur}
                           aria-describedby={errors.eventDate ? "eventDate-error" : undefined}
-                          className={`w-full bg-ivory/50 border rounded-lg py-3 pl-10 pr-4 text-sm text-charcoal focus:outline-none focus:border-plum focus:ring-1 focus:ring-plum/30 transition-colors ${
-                            errors.eventDate ? 'border-red-400 focus:border-red-400 focus:ring-red-100' : 'border-warm-gray/60'
-                          }`}
+                          className={`w-full bg-ivory/50 border rounded-lg py-3 pl-10 pr-4 text-sm text-charcoal focus:outline-none focus:border-plum focus:ring-1 focus:ring-plum/30 transition-colors ${errors.eventDate ? 'border-red-400 focus:border-red-400 focus:ring-red-100' : 'border-warm-gray/60'
+                            }`}
                         />
                       </div>
                       {errors.eventDate && touched.eventDate && (
@@ -908,10 +903,10 @@ export function PricingEstimator() {
                             key={type}
                             type="button"
                             onClick={() => setFormData(prev => ({ ...prev, eventType: type }))}
-                            className={`flex flex-col p-5 rounded-xl border text-left transition-all duration-500 relative group cursor-pointer ${
+                            className={`flex flex-col p-6 rounded-2xl border-2 text-left transition-all duration-300 relative group cursor-pointer ${
                               isSelected 
-                                ? 'border-plum bg-plum/[0.02] shadow-[0_0_20px_rgba(139,51,127,0.06)]' 
-                                : 'border-warm-gray hover:border-plum/50 hover:bg-ivory/40'
+                                ? 'border-plum bg-plum/[0.02] shadow-[0_8px_30px_rgba(139,51,127,0.12)] -translate-y-1' 
+                                : 'border-warm-gray/30 bg-white hover:border-plum/30 hover:shadow-md hover:-translate-y-1'
                             }`}
                           >
                             {isSelected && (
@@ -982,18 +977,18 @@ export function PricingEstimator() {
                     <p className="text-xs text-charcoal/50 mb-6 font-light">
                       Customize crew additions to craft the perfect frame composition. Base Candid Photography is included.
                     </p>
-                    
+
                     <div className="space-y-4">
                       {Object.entries(PRICING.services).map(([key, service]) => {
                         const serviceKey = key as keyof typeof formData.services;
                         const isChecked = formData.services[serviceKey];
                         const isFlat = 'flatPrice' in service;
-                        const priceText = isFlat 
+                        const priceText = isFlat
                           ? `${formatCurrency((service as any).flatPrice)} flat`
                           : `${formatCurrency((service as any).pricePerDay)} / day`;
 
                         return (
-                          <div 
+                          <div
                             key={key}
                             onClick={() => setFormData(prev => ({
                               ...prev,
@@ -1002,10 +997,10 @@ export function PricingEstimator() {
                                 [serviceKey]: !prev.services[serviceKey]
                               }
                             }))}
-                            className={`flex items-start gap-4 p-5 rounded-xl border transition-all duration-300 cursor-pointer ${
+                            className={`flex items-start gap-5 p-6 rounded-2xl border-2 transition-all duration-300 cursor-pointer ${
                               isChecked 
-                                ? 'border-plum bg-plum/[0.01]' 
-                                : 'border-warm-gray hover:border-plum/40'
+                                ? 'border-plum bg-plum/[0.02] shadow-[0_8px_30px_rgba(139,51,127,0.12)] -translate-y-1' 
+                                : 'border-warm-gray/30 bg-white hover:border-plum/30 hover:shadow-md hover:-translate-y-1'
                             }`}
                           >
                             <div className="pt-0.5">
@@ -1013,7 +1008,7 @@ export function PricingEstimator() {
                                 type="checkbox"
                                 id={`service-${key}`}
                                 checked={isChecked}
-                                onChange={() => {}} // handled by div click
+                                onChange={() => { }} // handled by div click
                                 className="w-4 h-4 rounded text-plum border-neutral-300 focus:ring-plum accent-plum cursor-pointer"
                               />
                             </div>
@@ -1084,7 +1079,7 @@ export function PricingEstimator() {
                     <p className="text-xs text-charcoal/50 mb-6 font-light">
                       Event size dictates coverage depth. Larger weddings require additional creative professionals for comprehensive coverage.
                     </p>
-                    
+
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                       {(Object.keys(PRICING.scale) as ScaleType[]).map((scKey) => {
                         const sc = PRICING.scale[scKey];
@@ -1094,11 +1089,10 @@ export function PricingEstimator() {
                             key={scKey}
                             type="button"
                             onClick={() => setFormData(prev => ({ ...prev, scale: scKey }))}
-                            className={`flex flex-col p-5 rounded-xl border text-left transition-all duration-300 relative cursor-pointer ${
-                              isSelected 
-                                ? 'border-plum bg-plum/[0.01]' 
-                                : 'border-warm-gray hover:border-plum/40'
-                            }`}
+                            className={`flex flex-col p-5 rounded-xl border text-left transition-all duration-300 relative cursor-pointer ${isSelected
+                                ? 'border-plum bg-plum/[0.03] shadow-[0_4px_20px_rgba(139,51,127,0.08)] ring-1 ring-plum/20'
+                                : 'border-warm-gray hover:border-plum/40 hover:bg-ivory/30 hover:shadow-md hover:-translate-y-0.5'
+                              }`}
                           >
                             <span className="text-[10px] tracking-wider uppercase font-semibold text-charcoal/40 mb-1">
                               {scKey === 'intimate' ? '01 / Intimate' : scKey === 'medium' ? '02 / Medium' : '03 / Grand'}
@@ -1121,7 +1115,7 @@ export function PricingEstimator() {
                     <p className="text-xs text-charcoal/50 mb-6 font-light">
                       Travel logistics, crew freight, and standard allowances mapped to your venue distance.
                     </p>
-                    
+
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                       {(Object.keys(PRICING.locations) as LocationType[]).map((locKey) => {
                         const loc = PRICING.locations[locKey];
@@ -1131,11 +1125,10 @@ export function PricingEstimator() {
                             key={locKey}
                             type="button"
                             onClick={() => setFormData(prev => ({ ...prev, location: locKey }))}
-                            className={`flex flex-col p-5 rounded-xl border text-left transition-all duration-300 relative cursor-pointer ${
-                              isSelected 
-                                ? 'border-plum bg-plum/[0.01]' 
-                                : 'border-warm-gray hover:border-plum/40'
-                            }`}
+                            className={`flex flex-col p-5 rounded-xl border text-left transition-all duration-300 relative cursor-pointer ${isSelected
+                                ? 'border-plum bg-plum/[0.03] shadow-[0_4px_20px_rgba(139,51,127,0.08)] ring-1 ring-plum/20'
+                                : 'border-warm-gray hover:border-plum/40 hover:bg-ivory/30 hover:shadow-md hover:-translate-y-0.5'
+                              }`}
                           >
                             <span className="text-[10px] font-semibold text-plum font-mono mb-1">
                               {loc.price === 0 ? 'Inc.' : `+${formatCurrency(loc.price)}`}
@@ -1166,13 +1159,12 @@ export function PricingEstimator() {
               )}
 
               {/* Navigation Action Panel */}
-              <div className="flex justify-between items-center pt-8 border-t border-warm-gray/30">
+              <div className="flex flex-col-reverse sm:flex-row justify-between items-stretch sm:items-center gap-4 sm:gap-0 pt-8 border-t border-warm-gray/30">
                 <button
                   type="button"
                   onClick={handlePrevStep}
-                  className={`inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-charcoal/70 hover:text-plum transition-colors cursor-pointer ${
-                    currentStep === 0 ? 'invisible pointer-events-none' : ''
-                  }`}
+                  className={`inline-flex items-center justify-center sm:justify-start gap-2 text-xs font-semibold uppercase tracking-wider text-charcoal/70 hover:text-plum py-3 sm:py-0 transition-colors cursor-pointer ${currentStep === 0 ? 'hidden sm:invisible sm:flex sm:pointer-events-none' : 'flex'
+                    }`}
                 >
                   <ArrowLeft size={14} /> Back
                 </button>
@@ -1181,15 +1173,16 @@ export function PricingEstimator() {
                   <button
                     type="button"
                     onClick={handleNextStep}
-                    className="inline-flex items-center gap-2 bg-obsidian hover:bg-plum text-white px-6 py-3.5 rounded-full text-xs font-semibold uppercase tracking-widest transition-all duration-300 shadow-md hover:scale-[1.02] cursor-pointer"
+                    className="inline-flex justify-center items-center gap-3 bg-obsidian hover:bg-plum text-white px-8 py-4 rounded-full text-xs font-bold uppercase tracking-widest transition-all duration-300 shadow-xl hover:shadow-[0_10px_30px_rgba(139,51,127,0.3)] hover:-translate-y-1 cursor-pointer w-full sm:w-auto"
                   >
-                    Next Step <ArrowRight size={14} />
+                    {currentStep > 0 && <span className="mr-3 border-r border-white/20 pr-4">{formatCurrency(pricingSummary.grandTotal)}</span>}
+                    Next Step <ArrowRight size={16} />
                   </button>
                 ) : (
                   <button
                     type="submit"
                     disabled={isSubmitting}
-                    className="inline-flex items-center gap-2 bg-gradient-to-r from-plum to-orchid text-white px-8 py-4 rounded-full text-xs font-semibold uppercase tracking-widest transition-all duration-500 shadow-md hover:shadow-plum/20 hover:scale-[1.02] disabled:opacity-50 cursor-pointer"
+                    className="inline-flex justify-center items-center gap-2 bg-gradient-to-r from-plum to-orchid text-white px-8 py-4 rounded-full text-xs font-semibold uppercase tracking-widest transition-all duration-500 shadow-lg hover:shadow-plum/30 hover:-translate-y-0.5 disabled:opacity-50 disabled:hover:translate-y-0 cursor-pointer w-full sm:w-auto"
                   >
                     {isSubmitting ? 'Submitting...' : 'Initiate Inquiry'}
                   </button>
@@ -1199,8 +1192,8 @@ export function PricingEstimator() {
           </div>
 
           {/* Right Column: Live Estimate Summary Card */}
-          <div className="lg:col-span-5 lg:sticky lg:top-28">
-            <div className="bg-obsidian text-white rounded-2xl p-6 md:p-8 border border-white/10 shadow-2xl relative overflow-hidden">
+          <div className="lg:col-span-5 lg:sticky lg:top-28 mt-8 lg:mt-0">
+            <div className="bg-obsidian text-white rounded-[2rem] p-8 md:p-10 border border-white/5 shadow-2xl relative overflow-hidden ring-1 ring-white/10">
               {/* Lock Overlay when on Step 1 (currentStep === 0) */}
               <AnimatePresence>
                 {currentStep === 0 && (
@@ -1225,7 +1218,7 @@ export function PricingEstimator() {
 
               {/* Artistic top border glow */}
               <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-plum via-orchid to-transparent"></div>
-              
+
               <div className="flex justify-between items-center mb-6">
                 <h3 className="font-serif text-lg md:text-xl tracking-wide text-white/90">
                   Investment Summary
@@ -1237,7 +1230,7 @@ export function PricingEstimator() {
 
               {/* Package Details Itemized list */}
               <div className="space-y-4 mb-6 border-b border-white/10 pb-6 text-xs text-white/70">
-                
+
                 {/* Event Base item */}
                 <div className="flex justify-between items-start gap-4">
                   <div>
@@ -1380,7 +1373,7 @@ export function PricingEstimator() {
               </div>
             </div>
           </div>
-          
+
         </div>
 
       </div>
