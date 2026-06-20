@@ -1,10 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import {
-  Calendar, ArrowRight, ArrowLeft, Check, Download,
-  Mail, Phone, User, CheckCircle2, AlertCircle, Lock
-} from 'lucide-react';
+import { ArrowRight, ArrowLeft, Check } from 'lucide-react';
 
 // Pricing Constants
 const PRICING = {
@@ -39,6 +35,7 @@ const PRICING = {
 type EventType = keyof typeof PRICING.events;
 type LocationType = keyof typeof PRICING.locations;
 type ScaleType = keyof typeof PRICING.scale;
+type ServiceType = keyof typeof PRICING.services;
 
 interface FormState {
   eventType: EventType;
@@ -62,11 +59,6 @@ interface FormState {
 
 export function PricingEstimator() {
   const [currentStep, setCurrentStep] = useState<number>(0);
-  const [isMounted, setIsMounted] = useState(false);
-
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
 
   const [formData, setFormData] = useState<FormState>({
     eventType: 'wedding',
@@ -90,7 +82,6 @@ export function PricingEstimator() {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [touched, setTouched] = useState<Record<string, boolean>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitted, setSubmitted] = useState(false);
   const [quoteId, setQuoteId] = useState('');
 
   // Generate a random Quote ID on mount
@@ -202,57 +193,6 @@ export function PricingEstimator() {
 
   const pricingSummary = calculateTotal();
 
-  // Recommended Crew Calculation
-  const getCrewComposition = () => {
-    const crew: string[] = [];
-    // Base Photographers
-    let photographers = 1;
-    let cinematographers = 0;
-    let assistants = 0;
-
-    if (formData.eventType === 'wedding') {
-      photographers = 2; // standard wedding base crew size
-    } else if (formData.eventType === 'prewedding') {
-      photographers = 1;
-    }
-
-    // Services Additions
-    if (formData.services.cinematicVideo) {
-      cinematographers += 2; // Standard cinematography team size
-      assistants += 1;
-    }
-    if (formData.services.traditionalPhoto) {
-      photographers += 1; // 1 traditional photographer
-    }
-    if (formData.services.droneAerial) {
-      crew.push('1 Licensed Drone Pilot');
-    }
-    if (formData.services.sameDayEdit) {
-      crew.push('1 On-site Video Editor');
-    }
-
-    // Guest Scale additions
-    if (formData.scale === 'medium') {
-      photographers += 1;
-      if (formData.services.cinematicVideo) cinematographers += 1;
-    } else if (formData.scale === 'grand') {
-      photographers += 2;
-      if (formData.services.cinematicVideo) cinematographers += 2;
-      assistants += 1;
-    }
-
-    if (photographers > 0) {
-      crew.unshift(`${photographers} Professional Photographer${photographers > 1 ? 's' : ''}`);
-    }
-    if (cinematographers > 0) {
-      crew.unshift(`${cinematographers} Professional Cinematographer${cinematographers > 1 ? 's' : ''}`);
-    }
-    if (assistants > 0) {
-      crew.push(`${assistants} Production Assistant${assistants > 1 ? 's' : ''}`);
-    }
-
-    return crew;
-  };
 
   const steps = [
     { title: "Details", subtitle: "Unlock pricing calculator" },
@@ -336,7 +276,7 @@ export function PricingEstimator() {
     // Simulate API request to agency CRM
     setTimeout(() => {
       setIsSubmitting(false);
-      setSubmitted(true);
+      alert('Your quote has been secured!');
     }, 1500);
   };
 
