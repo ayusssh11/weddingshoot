@@ -3,7 +3,7 @@ import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Calendar, ArrowRight, ArrowLeft, Check, Download, 
-  Mail, Phone, User, CheckCircle2, AlertCircle
+  Mail, Phone, User, CheckCircle2, AlertCircle, Lock
 } from 'lucide-react';
 
 // Pricing Constants
@@ -255,13 +255,37 @@ export function PricingEstimator() {
   };
 
   const steps = [
+    { title: "Details", subtitle: "Unlock pricing calculator" },
     { title: "Event Type", subtitle: "Select your celebration format" },
     { title: "Services", subtitle: "Customize crew coverage" },
-    { title: "Logistics", subtitle: "Scale and location insights" },
-    { title: "Submit", subtitle: "Secure visual legacy estimate" }
+    { title: "Logistics", subtitle: "Scale and destination" }
   ];
 
   const handleNextStep = () => {
+    if (currentStep === 0) {
+      // Validate Contact Details on Step 1
+      const nameErr = validateField('fullName', formData.fullName);
+      const emailErr = validateField('email', formData.email);
+      const phoneErr = validateField('phone', formData.phone);
+      const dateErr = validateField('eventDate', formData.eventDate);
+
+      if (nameErr || emailErr || phoneErr || dateErr) {
+        setErrors({
+          fullName: nameErr,
+          email: emailErr,
+          phone: phoneErr,
+          eventDate: dateErr
+        });
+        setTouched({
+          fullName: true,
+          email: true,
+          phone: true,
+          eventDate: true
+        });
+        return; // Block transitioning to step 2
+      }
+    }
+
     if (currentStep < steps.length - 1) {
       setCurrentStep(prev => prev + 1);
     }
@@ -284,7 +308,7 @@ export function PricingEstimator() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Validate final fields
+    // Validate contact fields just in case
     const nameErr = validateField('fullName', formData.fullName);
     const emailErr = validateField('email', formData.email);
     const phoneErr = validateField('phone', formData.phone);
@@ -303,8 +327,8 @@ export function PricingEstimator() {
         phone: true,
         eventDate: true
       });
-      // Snap to last step if not already there
-      setCurrentStep(3);
+      // Snap back to first step to fix errors
+      setCurrentStep(0);
       return;
     }
 
@@ -624,8 +648,32 @@ export function PricingEstimator() {
                 >
                   <button
                     onClick={() => {
-                      // Allow navigating back and forth if client details are not empty, or simple switching
-                      setCurrentStep(index);
+                      if (index === 0) {
+                        setCurrentStep(0);
+                      } else {
+                        const nameErr = validateField('fullName', formData.fullName);
+                        const emailErr = validateField('email', formData.email);
+                        const phoneErr = validateField('phone', formData.phone);
+                        const dateErr = validateField('eventDate', formData.eventDate);
+
+                        if (nameErr || emailErr || phoneErr || dateErr) {
+                          setErrors({
+                            fullName: nameErr,
+                            email: emailErr,
+                            phone: phoneErr,
+                            eventDate: dateErr
+                          });
+                          setTouched({
+                            fullName: true,
+                            email: true,
+                            phone: true,
+                            eventDate: true
+                          });
+                          setCurrentStep(0);
+                        } else {
+                          setCurrentStep(index);
+                        }
+                      }
                     }}
                     className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-semibold transition-all duration-500 ${
                       currentStep === index 
@@ -709,271 +757,8 @@ export function PricingEstimator() {
 
             <form onSubmit={handleSubmit} className="space-y-8">
               
-              {/* STEP 1: EVENT DETAILS */}
+              {/* STEP 1: CONTACT DETAILS (UNLOCK ESTIMATOR) */}
               {currentStep === 0 && (
-                <motion.div
-                  initial={{ opacity: 0, x: 20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -20 }}
-                  transition={{ duration: 0.4 }}
-                  className="space-y-8"
-                >
-                  <div>
-                    <h3 className="text-lg font-serif text-charcoal mb-4">Choose Celebration Format</h3>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      {(Object.keys(PRICING.events) as EventType[]).map((type) => {
-                        const evt = PRICING.events[type];
-                        const isSelected = formData.eventType === type;
-                        return (
-                          <button
-                            key={type}
-                            type="button"
-                            onClick={() => setFormData(prev => ({ ...prev, eventType: type }))}
-                            className={`flex flex-col p-5 rounded-xl border text-left transition-all duration-500 relative group cursor-pointer ${
-                              isSelected 
-                                ? 'border-plum bg-plum/[0.02] shadow-[0_0_20px_rgba(139,51,127,0.06)]' 
-                                : 'border-warm-gray hover:border-plum/50 hover:bg-ivory/40'
-                            }`}
-                          >
-                            {isSelected && (
-                              <div className="absolute right-4 top-4 w-5 h-5 rounded-full bg-plum text-white flex items-center justify-center shadow-md">
-                                <Check size={12} />
-                              </div>
-                            )}
-                            <span className={`text-xs font-semibold uppercase tracking-wider mb-2 transition-colors duration-300 ${isSelected ? 'text-plum' : 'text-charcoal/50'}`}>
-                              {type === 'wedding' ? '01 / WEDDING' : type === 'prewedding' ? '02 / PRE-WEDDING' : type === 'engagement' ? '03 / ROKA' : '04 / MILESTONE'}
-                            </span>
-                            <span className="font-serif text-base font-bold text-obsidian mb-2">
-                              {evt.name}
-                            </span>
-                            <span className="text-xs text-charcoal/60 leading-relaxed font-light">
-                              {evt.desc}
-                            </span>
-                          </button>
-                        );
-                      })}
-                    </div>
-                  </div>
-
-                  {/* Shoot Duration Slider */}
-                  {!PRICING.events[formData.eventType].isFlat && (
-                    <div className="space-y-4 pt-4 border-t border-warm-gray/30">
-                      <div className="flex justify-between items-center">
-                        <label htmlFor="duration-slider" className="text-sm font-semibold tracking-wider text-charcoal/70 uppercase">
-                          Shoot Duration
-                        </label>
-                        <span className="font-serif italic font-semibold text-lg text-plum">
-                          {formData.duration} Day{formData.duration > 1 ? 's' : ''} Coverage
-                        </span>
-                      </div>
-                      <div className="relative pt-2">
-                        <input
-                          id="duration-slider"
-                          type="range"
-                          min="1"
-                          max="5"
-                          value={formData.duration}
-                          onChange={(e) => setFormData(prev => ({ ...prev, duration: parseInt(e.target.value) }))}
-                          className="w-full h-1.5 bg-warm-gray rounded-lg appearance-none cursor-pointer accent-plum"
-                        />
-                        <div className="flex justify-between text-xs text-charcoal/40 font-mono mt-2 px-1">
-                          <span>1 Day</span>
-                          <span>2 Days</span>
-                          <span>3 Days</span>
-                          <span>4 Days</span>
-                          <span>5+ Days</span>
-                        </div>
-                      </div>
-                    </div>
-                  )}
-                </motion.div>
-              )}
-
-              {/* STEP 2: CREW COVERAGE SERVICES */}
-              {currentStep === 1 && (
-                <motion.div
-                  initial={{ opacity: 0, x: 20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -20 }}
-                  transition={{ duration: 0.4 }}
-                  className="space-y-6"
-                >
-                  <div>
-                    <h3 className="text-lg font-serif text-charcoal mb-2">Select Creative Services</h3>
-                    <p className="text-xs text-charcoal/50 mb-6 font-light">
-                      Customize crew additions to craft the perfect frame composition. Base Candid Photography is included.
-                    </p>
-                    
-                    <div className="space-y-4">
-                      {Object.entries(PRICING.services).map(([key, service]) => {
-                        const serviceKey = key as keyof typeof formData.services;
-                        const isChecked = formData.services[serviceKey];
-                        const isFlat = 'flatPrice' in service;
-                        const priceText = isFlat 
-                          ? `${formatCurrency((service as any).flatPrice)} flat`
-                          : `${formatCurrency((service as any).pricePerDay)} / day`;
-
-                        return (
-                          <div 
-                            key={key}
-                            onClick={() => setFormData(prev => ({
-                              ...prev,
-                              services: {
-                                ...prev.services,
-                                [serviceKey]: !prev.services[serviceKey]
-                              }
-                            }))}
-                            className={`flex items-start gap-4 p-5 rounded-xl border transition-all duration-300 cursor-pointer ${
-                              isChecked 
-                                ? 'border-plum bg-plum/[0.01]' 
-                                : 'border-warm-gray hover:border-plum/40'
-                            }`}
-                          >
-                            <div className="pt-0.5">
-                              <input
-                                type="checkbox"
-                                id={`service-${key}`}
-                                checked={isChecked}
-                                onChange={() => {}} // handled by div click
-                                className="w-4 h-4 rounded text-plum border-neutral-300 focus:ring-plum accent-plum cursor-pointer"
-                              />
-                            </div>
-                            <div className="flex-1">
-                              <div className="flex justify-between items-start gap-2">
-                                <label htmlFor={`service-${key}`} className="font-serif text-base font-bold text-obsidian cursor-pointer">
-                                  {service.name}
-                                </label>
-                                <span className="text-xs font-semibold text-plum font-mono whitespace-nowrap">
-                                  +{priceText}
-                                </span>
-                              </div>
-                              <p className="text-xs text-charcoal/60 leading-relaxed font-light mt-1">
-                                {service.desc}
-                              </p>
-                            </div>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  </div>
-
-                  {/* Art Books Counter */}
-                  <div className="pt-6 border-t border-warm-gray/30 flex flex-col sm:flex-row justify-between sm:items-center gap-4">
-                    <div>
-                      <h4 className="font-serif text-base font-bold text-obsidian flex items-center gap-2">
-                        {PRICING.albums.name}
-                      </h4>
-                      <p className="text-xs text-charcoal/50 font-light mt-0.5">
-                        High-quality physical legacy art books (+{formatCurrency(PRICING.albums.unitPrice)} each)
-                      </p>
-                    </div>
-                    <div className="flex items-center gap-3">
-                      <button
-                        type="button"
-                        onClick={() => setFormData(prev => ({ ...prev, albumCount: Math.max(0, prev.albumCount - 1) }))}
-                        className="w-10 h-10 rounded-full border border-warm-gray flex items-center justify-center text-charcoal hover:border-plum hover:text-plum font-semibold transition-colors duration-300 cursor-pointer"
-                      >
-                        -
-                      </button>
-                      <span className="font-mono text-base font-bold w-6 text-center text-obsidian">
-                        {formData.albumCount}
-                      </span>
-                      <button
-                        type="button"
-                        onClick={() => setFormData(prev => ({ ...prev, albumCount: prev.albumCount + 1 }))}
-                        className="w-10 h-10 rounded-full border border-warm-gray flex items-center justify-center text-charcoal hover:border-plum hover:text-plum font-semibold transition-colors duration-300 cursor-pointer"
-                      >
-                        +
-                      </button>
-                    </div>
-                  </div>
-                </motion.div>
-              )}
-
-              {/* STEP 3: LOGISTICS & SCALE */}
-              {currentStep === 2 && (
-                <motion.div
-                  initial={{ opacity: 0, x: 20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -20 }}
-                  transition={{ duration: 0.4 }}
-                  className="space-y-8"
-                >
-                  {/* Guest scale */}
-                  <div>
-                    <h3 className="text-lg font-serif text-charcoal mb-2">Guest Scale & Crew Staffing</h3>
-                    <p className="text-xs text-charcoal/50 mb-6 font-light">
-                      Event size dictates coverage depth. Larger weddings require additional creative professionals for comprehensive coverage.
-                    </p>
-                    
-                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                      {(Object.keys(PRICING.scale) as ScaleType[]).map((scKey) => {
-                        const sc = PRICING.scale[scKey];
-                        const isSelected = formData.scale === scKey;
-                        return (
-                          <button
-                            key={scKey}
-                            type="button"
-                            onClick={() => setFormData(prev => ({ ...prev, scale: scKey }))}
-                            className={`flex flex-col p-5 rounded-xl border text-left transition-all duration-300 relative cursor-pointer ${
-                              isSelected 
-                                ? 'border-plum bg-plum/[0.01]' 
-                                : 'border-warm-gray hover:border-plum/40'
-                            }`}
-                          >
-                            <span className="text-[10px] tracking-wider uppercase font-semibold text-charcoal/40 mb-1">
-                              {scKey === 'intimate' ? '01 / Intimate' : scKey === 'medium' ? '02 / Medium' : '03 / Grand'}
-                            </span>
-                            <span className="font-serif text-sm font-bold text-obsidian mb-2">
-                              {sc.name}
-                            </span>
-                            <span className="text-[10px] bg-warm-gray/40 text-charcoal/70 px-2 py-0.5 rounded font-mono inline-block w-fit mt-1">
-                              {sc.crewBonus}
-                            </span>
-                          </button>
-                        );
-                      })}
-                    </div>
-                  </div>
-
-                  {/* Destination Location */}
-                  <div className="pt-6 border-t border-warm-gray/30">
-                    <h3 className="text-lg font-serif text-charcoal mb-2">Celebration Destination</h3>
-                    <p className="text-xs text-charcoal/50 mb-6 font-light">
-                      Travel logistics, crew freight, and standard allowances mapped to your venue distance.
-                    </p>
-                    
-                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                      {(Object.keys(PRICING.locations) as LocationType[]).map((locKey) => {
-                        const loc = PRICING.locations[locKey];
-                        const isSelected = formData.location === locKey;
-                        return (
-                          <button
-                            key={locKey}
-                            type="button"
-                            onClick={() => setFormData(prev => ({ ...prev, location: locKey }))}
-                            className={`flex flex-col p-5 rounded-xl border text-left transition-all duration-300 relative cursor-pointer ${
-                              isSelected 
-                                ? 'border-plum bg-plum/[0.01]' 
-                                : 'border-warm-gray hover:border-plum/40'
-                            }`}
-                          >
-                            <span className="text-[10px] font-semibold text-plum font-mono mb-1">
-                              {loc.price === 0 ? 'Inc.' : `+${formatCurrency(loc.price)}`}
-                            </span>
-                            <span className="font-serif text-sm font-bold text-obsidian">
-                              {loc.name}
-                            </span>
-                          </button>
-                        );
-                      })}
-                    </div>
-                  </div>
-                </motion.div>
-              )}
-
-              {/* STEP 4: CONTACT & FINAL CONFIRMATION */}
-              {currentStep === 3 && (
                 <motion.div
                   initial={{ opacity: 0, x: 20 }}
                   animate={{ opacity: 1, x: 0 }}
@@ -984,7 +769,7 @@ export function PricingEstimator() {
                   <div>
                     <h3 className="text-lg font-serif text-charcoal mb-2">Visual Legacy Inquiry Details</h3>
                     <p className="text-xs text-charcoal/50 mb-6 font-light">
-                      To lock your date estimate and request a consultation back, finalize your booking details.
+                      Please enter your details below to unlock the dynamic pricing calculator and crew recommendation planner.
                     </p>
                   </div>
 
@@ -1100,9 +885,272 @@ export function PricingEstimator() {
                       )}
                     </div>
                   </div>
+                </motion.div>
+              )}
+
+              {/* STEP 2: EVENT DETAILS */}
+              {currentStep === 1 && (
+                <motion.div
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -20 }}
+                  transition={{ duration: 0.4 }}
+                  className="space-y-8"
+                >
+                  <div>
+                    <h3 className="text-lg font-serif text-charcoal mb-4">Choose Celebration Format</h3>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      {(Object.keys(PRICING.events) as EventType[]).map((type) => {
+                        const evt = PRICING.events[type];
+                        const isSelected = formData.eventType === type;
+                        return (
+                          <button
+                            key={type}
+                            type="button"
+                            onClick={() => setFormData(prev => ({ ...prev, eventType: type }))}
+                            className={`flex flex-col p-5 rounded-xl border text-left transition-all duration-500 relative group cursor-pointer ${
+                              isSelected 
+                                ? 'border-plum bg-plum/[0.02] shadow-[0_0_20px_rgba(139,51,127,0.06)]' 
+                                : 'border-warm-gray hover:border-plum/50 hover:bg-ivory/40'
+                            }`}
+                          >
+                            {isSelected && (
+                              <div className="absolute right-4 top-4 w-5 h-5 rounded-full bg-plum text-white flex items-center justify-center shadow-md">
+                                <Check size={12} />
+                              </div>
+                            )}
+                            <span className={`text-xs font-semibold uppercase tracking-wider mb-2 transition-colors duration-300 ${isSelected ? 'text-plum' : 'text-charcoal/50'}`}>
+                              {type === 'wedding' ? '01 / WEDDING' : type === 'prewedding' ? '02 / PRE-WEDDING' : type === 'engagement' ? '03 / ROKA' : '04 / MILESTONE'}
+                            </span>
+                            <span className="font-serif text-base font-bold text-obsidian mb-2">
+                              {evt.name}
+                            </span>
+                            <span className="text-xs text-charcoal/60 leading-relaxed font-light">
+                              {evt.desc}
+                            </span>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+
+                  {/* Shoot Duration Slider */}
+                  {!PRICING.events[formData.eventType].isFlat && (
+                    <div className="space-y-4 pt-4 border-t border-warm-gray/30">
+                      <div className="flex justify-between items-center">
+                        <label htmlFor="duration-slider" className="text-sm font-semibold tracking-wider text-charcoal/70 uppercase">
+                          Shoot Duration
+                        </label>
+                        <span className="font-serif italic font-semibold text-lg text-plum">
+                          {formData.duration} Day{formData.duration > 1 ? 's' : ''} Coverage
+                        </span>
+                      </div>
+                      <div className="relative pt-2">
+                        <input
+                          id="duration-slider"
+                          type="range"
+                          min="1"
+                          max="5"
+                          value={formData.duration}
+                          onChange={(e) => setFormData(prev => ({ ...prev, duration: parseInt(e.target.value) }))}
+                          className="w-full h-1.5 bg-warm-gray rounded-lg appearance-none cursor-pointer accent-plum"
+                        />
+                        <div className="flex justify-between text-xs text-charcoal/40 font-mono mt-2 px-1">
+                          <span>1 Day</span>
+                          <span>2 Days</span>
+                          <span>3 Days</span>
+                          <span>4 Days</span>
+                          <span>5+ Days</span>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </motion.div>
+              )}
+
+              {/* STEP 3: CREW COVERAGE SERVICES */}
+              {currentStep === 2 && (
+                <motion.div
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -20 }}
+                  transition={{ duration: 0.4 }}
+                  className="space-y-6"
+                >
+                  <div>
+                    <h3 className="text-lg font-serif text-charcoal mb-2">Select Creative Services</h3>
+                    <p className="text-xs text-charcoal/50 mb-6 font-light">
+                      Customize crew additions to craft the perfect frame composition. Base Candid Photography is included.
+                    </p>
+                    
+                    <div className="space-y-4">
+                      {Object.entries(PRICING.services).map(([key, service]) => {
+                        const serviceKey = key as keyof typeof formData.services;
+                        const isChecked = formData.services[serviceKey];
+                        const isFlat = 'flatPrice' in service;
+                        const priceText = isFlat 
+                          ? `${formatCurrency((service as any).flatPrice)} flat`
+                          : `${formatCurrency((service as any).pricePerDay)} / day`;
+
+                        return (
+                          <div 
+                            key={key}
+                            onClick={() => setFormData(prev => ({
+                              ...prev,
+                              services: {
+                                ...prev.services,
+                                [serviceKey]: !prev.services[serviceKey]
+                              }
+                            }))}
+                            className={`flex items-start gap-4 p-5 rounded-xl border transition-all duration-300 cursor-pointer ${
+                              isChecked 
+                                ? 'border-plum bg-plum/[0.01]' 
+                                : 'border-warm-gray hover:border-plum/40'
+                            }`}
+                          >
+                            <div className="pt-0.5">
+                              <input
+                                type="checkbox"
+                                id={`service-${key}`}
+                                checked={isChecked}
+                                onChange={() => {}} // handled by div click
+                                className="w-4 h-4 rounded text-plum border-neutral-300 focus:ring-plum accent-plum cursor-pointer"
+                              />
+                            </div>
+                            <div className="flex-1">
+                              <div className="flex justify-between items-start gap-2">
+                                <label htmlFor={`service-${key}`} className="font-serif text-base font-bold text-obsidian cursor-pointer">
+                                  {service.name}
+                                </label>
+                                <span className="text-xs font-semibold text-plum font-mono whitespace-nowrap">
+                                  +{priceText}
+                                </span>
+                              </div>
+                              <p className="text-xs text-charcoal/60 leading-relaxed font-light mt-1">
+                                {service.desc}
+                              </p>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+
+                  {/* Art Books Counter */}
+                  <div className="pt-6 border-t border-warm-gray/30 flex flex-col sm:flex-row justify-between sm:items-center gap-4">
+                    <div>
+                      <h4 className="font-serif text-base font-bold text-obsidian flex items-center gap-2">
+                        {PRICING.albums.name}
+                      </h4>
+                      <p className="text-xs text-charcoal/50 font-light mt-0.5">
+                        High-quality physical legacy art books (+{formatCurrency(PRICING.albums.unitPrice)} each)
+                      </p>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <button
+                        type="button"
+                        onClick={() => setFormData(prev => ({ ...prev, albumCount: Math.max(0, prev.albumCount - 1) }))}
+                        className="w-10 h-10 rounded-full border border-warm-gray flex items-center justify-center text-charcoal hover:border-plum hover:text-plum font-semibold transition-colors duration-300 cursor-pointer"
+                      >
+                        -
+                      </button>
+                      <span className="font-mono text-base font-bold w-6 text-center text-obsidian">
+                        {formData.albumCount}
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => setFormData(prev => ({ ...prev, albumCount: prev.albumCount + 1 }))}
+                        className="w-10 h-10 rounded-full border border-warm-gray flex items-center justify-center text-charcoal hover:border-plum hover:text-plum font-semibold transition-colors duration-300 cursor-pointer"
+                      >
+                        +
+                      </button>
+                    </div>
+                  </div>
+                </motion.div>
+              )}
+
+              {/* STEP 4: LOGISTICS & SCALE & NOTES */}
+              {currentStep === 3 && (
+                <motion.div
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -20 }}
+                  transition={{ duration: 0.4 }}
+                  className="space-y-8"
+                >
+                  {/* Guest scale */}
+                  <div>
+                    <h3 className="text-lg font-serif text-charcoal mb-2">Guest Scale & Crew Staffing</h3>
+                    <p className="text-xs text-charcoal/50 mb-6 font-light">
+                      Event size dictates coverage depth. Larger weddings require additional creative professionals for comprehensive coverage.
+                    </p>
+                    
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                      {(Object.keys(PRICING.scale) as ScaleType[]).map((scKey) => {
+                        const sc = PRICING.scale[scKey];
+                        const isSelected = formData.scale === scKey;
+                        return (
+                          <button
+                            key={scKey}
+                            type="button"
+                            onClick={() => setFormData(prev => ({ ...prev, scale: scKey }))}
+                            className={`flex flex-col p-5 rounded-xl border text-left transition-all duration-300 relative cursor-pointer ${
+                              isSelected 
+                                ? 'border-plum bg-plum/[0.01]' 
+                                : 'border-warm-gray hover:border-plum/40'
+                            }`}
+                          >
+                            <span className="text-[10px] tracking-wider uppercase font-semibold text-charcoal/40 mb-1">
+                              {scKey === 'intimate' ? '01 / Intimate' : scKey === 'medium' ? '02 / Medium' : '03 / Grand'}
+                            </span>
+                            <span className="font-serif text-sm font-bold text-obsidian mb-2">
+                              {sc.name}
+                            </span>
+                            <span className="text-[10px] bg-warm-gray/40 text-charcoal/70 px-2 py-0.5 rounded font-mono inline-block w-fit mt-1">
+                              {sc.crewBonus}
+                            </span>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+
+                  {/* Destination Location */}
+                  <div className="pt-6 border-t border-warm-gray/30">
+                    <h3 className="text-lg font-serif text-charcoal mb-2">Celebration Destination</h3>
+                    <p className="text-xs text-charcoal/50 mb-6 font-light">
+                      Travel logistics, crew freight, and standard allowances mapped to your venue distance.
+                    </p>
+                    
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                      {(Object.keys(PRICING.locations) as LocationType[]).map((locKey) => {
+                        const loc = PRICING.locations[locKey];
+                        const isSelected = formData.location === locKey;
+                        return (
+                          <button
+                            key={locKey}
+                            type="button"
+                            onClick={() => setFormData(prev => ({ ...prev, location: locKey }))}
+                            className={`flex flex-col p-5 rounded-xl border text-left transition-all duration-300 relative cursor-pointer ${
+                              isSelected 
+                                ? 'border-plum bg-plum/[0.01]' 
+                                : 'border-warm-gray hover:border-plum/40'
+                            }`}
+                          >
+                            <span className="text-[10px] font-semibold text-plum font-mono mb-1">
+                              {loc.price === 0 ? 'Inc.' : `+${formatCurrency(loc.price)}`}
+                            </span>
+                            <span className="font-serif text-sm font-bold text-obsidian">
+                              {loc.name}
+                            </span>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
 
                   {/* Notes */}
-                  <div className="flex flex-col relative">
+                  <div className="pt-6 border-t border-warm-gray/30 flex flex-col relative">
                     <label htmlFor="notes" className="text-xs uppercase tracking-widest text-charcoal/60 mb-2 font-medium">Creative Vision / Special Notes</label>
                     <textarea
                       id="notes"
@@ -1153,6 +1201,28 @@ export function PricingEstimator() {
           {/* Right Column: Live Estimate Summary Card */}
           <div className="lg:col-span-5 lg:sticky lg:top-28">
             <div className="bg-obsidian text-white rounded-2xl p-6 md:p-8 border border-white/10 shadow-2xl relative overflow-hidden">
+              {/* Lock Overlay when on Step 1 (currentStep === 0) */}
+              <AnimatePresence>
+                {currentStep === 0 && (
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    className="absolute inset-0 bg-obsidian/90 backdrop-blur-md z-20 flex flex-col items-center justify-center text-center p-8 select-none"
+                  >
+                    <div className="w-16 h-16 rounded-full bg-white/5 flex items-center justify-center text-orchid mb-6 border border-white/10 shadow-[0_0_20px_rgba(218,112,214,0.15)]">
+                      <Lock size={24} className="text-orchid animate-pulse" />
+                    </div>
+                    <h4 className="font-serif text-xl text-white tracking-wide mb-3">
+                      Calculator Locked
+                    </h4>
+                    <p className="text-xs text-white/50 max-w-[260px] leading-relaxed font-light font-sans">
+                      Please enter your contact and event details in the inquiry form to unlock the investment estimator and custom package builder.
+                    </p>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+
               {/* Artistic top border glow */}
               <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-plum via-orchid to-transparent"></div>
               
