@@ -287,10 +287,10 @@ export function PricingEstimator() {
   };
 
   return (
-    <section className="bg-ivory pb-20 pt-24 sm:pt-28 md:pt-32 relative min-h-screen" id="estimator">
-      {/* Background Image at bottom */}
-      <div className="absolute inset-x-0 bottom-0 h-[800px] pointer-events-none z-0">
-        <div className="absolute inset-0 bg-gradient-to-b from-ivory via-ivory/60 to-transparent z-10" />
+    <section className="bg-ivory pb-12 pt-10 sm:pt-12 md:pt-14 relative overflow-hidden" id="estimator">
+      {/* Background Image filling the section container */}
+      <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-b from-ivory via-ivory/65 to-transparent z-10" />
         <img src="https://images.unsplash.com/photo-1519225421980-715cb0215aed?q=80&w=3000&auto=format&fit=crop" className="w-full h-full object-cover opacity-40 mix-blend-multiply" alt="" />
       </div>
 

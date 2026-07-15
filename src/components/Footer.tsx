@@ -34,28 +34,28 @@ export function Footer() {
             </h4>
             <ul className="flex flex-col gap-4 text-xs font-light text-alabaster/60 uppercase tracking-widest">
               <li>
-                <a href="#portfolio" className="hover:text-orchid transition-colors duration-300">
-                  The Portfolios
+                <a href="#real-weddings" className="hover:text-orchid transition-colors duration-300">
+                  Real Weddings
                 </a>
               </li>
               <li>
-                <a href="#featured" className="hover:text-orchid transition-colors duration-300">
-                  Featured Stories
+                <a href="#differentiator" className="hover:text-orchid transition-colors duration-300">
+                  Our Differentiators
                 </a>
               </li>
               <li>
-                <a href="#philosophy" className="hover:text-orchid transition-colors duration-300">
-                  Our Philosophy
+                <a href="#services" className="hover:text-orchid transition-colors duration-300">
+                  What We Shoot
                 </a>
               </li>
               <li>
-                <a href="#estimator" className="hover:text-orchid transition-colors duration-300">
-                  Pricing Estimator
+                <a href="#locations" className="hover:text-orchid transition-colors duration-300">
+                  Locations
                 </a>
               </li>
               <li>
-                <a href="#contact" className="hover:text-orchid transition-colors duration-300">
-                  Availability
+                <a href="#how-we-quote" className="hover:text-orchid transition-colors duration-300">
+                  How We Quote
                 </a>
               </li>
             </ul>
