@@ -88,13 +88,13 @@ export function RealWeddings() {
               />
               
               {/* Dark Scrim overlay */}
-              <div className="absolute inset-0 bg-gradient-to-t from-obsidian/85 via-obsidian/20 to-transparent transition-opacity duration-500 group-hover:opacity-90"></div>
+              <div className="absolute inset-0 bg-gradient-to-t from-obsidian/95 via-obsidian/50 to-transparent transition-opacity duration-500 group-hover:opacity-90"></div>
 
               {/* Luxury Inset Border Frame (Draws itself / fades in on hover) */}
               <div className="absolute inset-4 border border-white/0 group-hover:border-white/20 rounded-lg pointer-events-none transition-all duration-700 ease-out scale-98 group-hover:scale-100 opacity-0 group-hover:opacity-100"></div>
 
               {/* Text content absolute at bottom */}
-              <div className="absolute bottom-0 left-0 w-full p-6 md:p-8 flex flex-col justify-end text-white relative z-10">
+              <div className="absolute bottom-0 left-0 w-full p-6 md:p-8 flex flex-col justify-end text-white z-10">
                 <span className="text-[10px] tracking-widest uppercase font-bold text-orchid/90 mb-1.5 font-sans">
                   {w.location}
                 </span>

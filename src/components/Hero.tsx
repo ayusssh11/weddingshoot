@@ -16,7 +16,7 @@ export function Hero({ onOpenEstimator }: HeroProps) {
     offset: ["start start", "end start"]
   });
   
-  const bgY = useTransform(scrollYProgress, [0, 1], ["0%", "30%"]);
+  const bgY = useTransform(scrollYProgress, [0, 1], ["-5%", "5%"]);
   const bgScale = useTransform(scrollYProgress, [0, 1], [1, 1.15]);
 
   return (
@@ -27,12 +27,13 @@ export function Hero({ onOpenEstimator }: HeroProps) {
       {/* Parallax Background Image */}
       <motion.div 
         style={{ y: bgY, scale: bgScale }}
-        className="absolute inset-0 z-0 origin-center h-full w-full"
+        className="absolute inset-x-0 -top-20 -bottom-20 z-0 origin-center h-[calc(100%+10rem)] w-full"
       >
         <img 
+
           src="https://weddingshoot.in/wp-content/uploads/0E1A6298.webp" 
           alt="Cinematic Wedding Shoot" 
-          className="w-full h-full object-cover opacity-60"
+          className="w-full h-full object-cover object-top opacity-60"
         />
         {/* Scrim/Overlay */}
         <div className="absolute inset-0 bg-gradient-to-t from-obsidian via-obsidian/40 to-obsidian/30 mix-blend-multiply"></div>
