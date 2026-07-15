@@ -78,7 +78,7 @@ export function Team() {
         {/* Closing Line */}
         <motion.p
           {...fadeUp(0.3)}
-          className="text-center text-sm md:text-base font-serif italic text-plum mt-12 border-t border-warm-gray/30 pt-8"
+          className="text-center text-lg md:text-2xl font-serif italic text-plum mt-12 border-t border-warm-gray/30 pt-8"
         >
           One in-house team. The people you meet are the people who shoot.
         </motion.p>

@@ -83,7 +83,7 @@ export function Faq() {
                   onClick={() => toggleFaq(index)}
                   className="w-full flex items-center justify-between gap-6 text-left focus:outline-none group cursor-pointer"
                 >
-                  <span className="font-serif text-lg md:text-xl text-obsidian font-medium group-hover:text-plum transition-colors">
+                  <span className="font-serif text-xl md:text-2xl lg:text-3xl text-obsidian font-medium group-hover:text-plum transition-colors">
                     {faq.question}
                   </span>
                   <span className="flex-shrink-0 text-orchid transition-colors duration-300">
