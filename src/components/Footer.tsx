@@ -59,6 +59,11 @@ export function Footer() {
                 </a>
               </li>
               <li>
+                <a href="#blog" className="hover:text-orchid transition-colors duration-300">
+                  Blog
+                </a>
+              </li>
+              <li>
                 <a href="/sitemap.html" className="hover:text-orchid transition-colors duration-300">
                   Sitemap
                 </a>

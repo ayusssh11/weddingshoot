@@ -18,7 +18,8 @@ export function Header({ onOpenEstimator }: HeaderProps) {
     { name: 'How We Quote', href: '#how-we-quote' },
     { name: 'Team', href: '#team' },
     { name: 'Testimonials', href: '#testimonials' },
-    { name: 'FAQ', href: '#faq' }
+    { name: 'FAQ', href: '#faq' },
+    { name: 'Blog', href: '#blog' }
   ];
 
   useEffect(() => {
