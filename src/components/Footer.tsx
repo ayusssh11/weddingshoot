@@ -58,6 +58,11 @@ export function Footer() {
                   How We Quote
                 </a>
               </li>
+              <li>
+                <a href="/sitemap.html" className="hover:text-orchid transition-colors duration-300">
+                  Sitemap
+                </a>
+              </li>
             </ul>
           </div>
 

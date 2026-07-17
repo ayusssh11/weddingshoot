@@ -1,0 +1,254 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HTML Sitemap | WeddingShoot Studio</title>
+  <!-- SEO Meta Tags -->
+  <meta name="description" content="Sitemap for WeddingShoot Studio. Find and navigate to all the sections, services, pre-wedding shoot locations, pricing estimator, and testimonials." />
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@200;300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            serif: ['"Cormorant Garamond"', 'Georgia', 'serif'],
+            sans: ['"Plus Jakarta Sans"', 'Inter', 'sans-serif'],
+          },
+          colors: {
+            alabaster: '#FFFFFF',
+            ivory: '#FDFBF7',
+            obsidian: '#120D16',
+            plum: '#8B337F',
+            orchid: '#E668B3',
+            charcoal: '#2D2533',
+            warmGray: '#E5E0DA',
+          }
+        }
+      }
+    }
+  </script>
+  
+  <style>
+    html {
+      scroll-behavior: smooth;
+    }
+    body {
+      background-color: #FDFBF7; /* ivory */
+      color: #120D16; /* obsidian */
+    }
+    .sitemap-link {
+      position: relative;
+      transition: color 0.3s ease;
+    }
+    .sitemap-link::after {
+      content: '';
+      position: absolute;
+      width: 0;
+      height: 1px;
+      bottom: -2px;
+      left: 0;
+      background-color: #E668B3; /* orchid */
+      transition: width 0.3s ease;
+    }
+    .sitemap-link:hover {
+      color: #E668B3;
+    }
+    .sitemap-link:hover::after {
+      width: 100%;
+    }
+  </style>
+</head>
+
+<body class="font-sans antialiased min-h-screen flex flex-col justify-between">
+  
+  <!-- Header -->
+  <header class="border-b border-warmGray/30 bg-white/80 backdrop-blur-md sticky top-0 z-50 py-4 px-6 md:px-12">
+    <div class="container mx-auto flex items-center justify-between">
+      <a href="/" class="flex items-center h-10 md:h-12">
+        <img 
+          src="https://weddingshoot.in/wp-content/uploads/Wedding-Shoot-Logo-01.png" 
+          alt="Wedding Shoot Logo" 
+          class="h-full w-auto object-contain"
+        />
+      </a>
+      <a href="/" class="text-[10px] md:text-xs tracking-[0.25em] uppercase font-bold text-obsidian hover:text-orchid transition-colors duration-300">
+        Back to Home
+      </a>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="flex-grow py-16 md:py-24 px-6 md:px-12">
+    <div class="container mx-auto max-w-4xl">
+      
+      <!-- Title -->
+      <div class="text-center md:text-left mb-16 border-b border-warmGray/25 pb-8">
+        <h1 class="font-serif italic text-4xl sm:text-5xl md:text-6xl text-obsidian leading-tight mb-4">
+          Sitemap
+        </h1>
+        <p class="text-xs md:text-sm font-light uppercase tracking-widest text-obsidian/50">
+          A comprehensive directory of our pages, sections, and resources
+        </p>
+      </div>
+
+      <!-- Grid Layout -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
+        
+        <!-- Section: Website Sections -->
+        <div>
+          <h2 class="font-serif text-xl sm:text-2xl text-obsidian border-b border-warmGray/30 pb-3 mb-6 uppercase tracking-wider">
+            Website Sections
+          </h2>
+          <ul class="space-y-4 text-sm font-light text-obsidian/75">
+            <li>
+              <a href="/#" class="sitemap-link inline-block">
+                Home / Top
+              </a>
+            </li>
+            <li>
+              <a href="/#real-weddings" class="sitemap-link inline-block">
+                Real Weddings Portfolio
+              </a>
+            </li>
+            <li>
+              <a href="/#differentiator" class="sitemap-link inline-block">
+                Our Differentiators & Philosophy
+              </a>
+            </li>
+            <li>
+              <a href="/#services" class="sitemap-link inline-block">
+                Services & Offerings
+              </a>
+            </li>
+            <li>
+              <a href="/#locations" class="sitemap-link inline-block">
+                Pre-Wedding Locations
+              </a>
+            </li>
+            <li>
+              <a href="/#destination" class="sitemap-link inline-block">
+                Destination Weddings
+              </a>
+            </li>
+            <li>
+              <a href="/#how-we-quote" class="sitemap-link inline-block">
+                How We Quote (Pricing Philosophy)
+              </a>
+            </li>
+            <li>
+              <a href="/#team" class="sitemap-link inline-block">
+                Meet the Team
+              </a>
+            </li>
+            <li>
+              <a href="/#testimonials" class="sitemap-link inline-block">
+                Testimonials & Client Stories
+              </a>
+            </li>
+            <li>
+              <a href="/#faq" class="sitemap-link inline-block">
+                Frequently Asked Questions (FAQ)
+              </a>
+            </li>
+            <li>
+              <a href="/#estimator" class="sitemap-link inline-block font-medium text-plum">
+                Check Availability & Price Estimator
+              </a>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Section: Contact & Socials -->
+        <div class="flex flex-col gap-10">
+          
+          <!-- Contact Details -->
+          <div>
+            <h2 class="font-serif text-xl sm:text-2xl text-obsidian border-b border-warmGray/30 pb-3 mb-6 uppercase tracking-wider">
+              The Atelier
+            </h2>
+            <ul class="space-y-4 text-sm font-light text-obsidian/75">
+              <li>
+                <span class="block text-[9px] text-orchid tracking-widest font-bold uppercase mb-0.5">Location</span>
+                <span class="text-obsidian/90">Gurgaon, Haryana, India</span>
+              </li>
+              <li>
+                <span class="block text-[9px] text-orchid tracking-widest font-bold uppercase mb-0.5">Email</span>
+                <a href="mailto:amanstudio78@gmail.com" class="sitemap-link inline-block">
+                  amanstudio78@gmail.com
+                </a>
+              </li>
+              <li>
+                <span class="block text-[9px] text-orchid tracking-widest font-bold uppercase mb-0.5">Call</span>
+                <a href="tel:8700609950" class="sitemap-link inline-block">
+                  +91 8700609950
+                </a>
+              </li>
+              <li>
+                <span class="block text-[9px] text-orchid tracking-widest font-bold uppercase mb-0.5">WhatsApp Inquiry</span>
+                <a href="https://wa.me/918700609950?text=Hi%2C%20I%20would%20like%20to%20inquire%20about%20a%20wedding%20shoot%21" target="_blank" rel="noopener noreferrer" class="sitemap-link inline-block text-[#25D366] font-semibold">
+                  Chat on WhatsApp
+                </a>
+              </li>
+            </ul>
+          </div>
+
+          <!-- Social Channels -->
+          <div>
+            <h2 class="font-serif text-xl sm:text-2xl text-obsidian border-b border-warmGray/30 pb-3 mb-6 uppercase tracking-wider">
+              Social Channels
+            </h2>
+            <ul class="space-y-4 text-sm font-light text-obsidian/75">
+              <li>
+                <a href="http://bit.ly/amandigitalphotography" target="_blank" rel="noopener noreferrer" class="sitemap-link inline-block">
+                  Facebook
+                </a>
+              </li>
+              <li>
+                <a href="http://bit.ly/weddingshoot1" target="_blank" rel="noopener noreferrer" class="sitemap-link inline-block">
+                  Instagram
+                </a>
+              </li>
+              <li>
+                <a href="https://www.youtube.com/channel/UC9IWnICeJGHk0gvQgQ4PXWQ" target="_blank" rel="noopener noreferrer" class="sitemap-link inline-block">
+                  YouTube
+                </a>
+              </li>
+            </ul>
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-charcoal text-alabaster/40 border-t border-white/5 py-12 px-6 md:px-12 text-center text-xs font-light tracking-widest uppercase">
+    <div class="container mx-auto">
+      <p class="mb-4 text-alabaster/70">
+        &copy; <span id="year">2026</span> WeddingShoot Studio. Handcrafted for legacy celebrations.
+      </p>
+      <a href="/" class="hover:text-orchid transition-colors duration-300">
+        Home Page
+      </a>
+    </div>
+    <script>
+      document.getElementById('year').textContent = new Date().getFullYear();
+    </script>
+  </footer>
+
+</body>
+
+</html>
