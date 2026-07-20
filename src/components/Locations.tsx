@@ -57,7 +57,7 @@ export function Locations() {
           </span>
           {/* Elegant Heading Reveal */}
           <div className="overflow-hidden py-1">
-            <motion.h2 
+            <motion.h2
               initial={{ y: "100%" }}
               whileInView={{ y: 0 }}
               viewport={{ once: true }}
@@ -103,7 +103,7 @@ export function Locations() {
                   {loc.tagline}
                 </p>
                 <span className="inline-flex items-center gap-1.5 text-[9px] tracking-[0.25em] uppercase font-semibold text-white/70 group-hover:text-white transition-colors">
-                  See work 
+                  See work
                   <ArrowRight size={10} className="transform group-hover:translate-x-1 transition-transform duration-300" />
                 </span>
               </div>
