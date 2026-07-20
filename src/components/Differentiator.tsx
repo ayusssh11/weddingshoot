@@ -88,7 +88,7 @@ export function Differentiator({ onOpenEstimator }: DifferentiatorProps) {
             >
               {/* Regular Photographer Side */}
               <div className="bg-white/60 border border-warm-gray/30 rounded-xl p-5 md:p-6 flex items-start gap-4 shadow-xs">
-                <div className="w-7 h-7 rounded-full bg-red-50 text-red-400 flex items-center justify-center flex-shrink-0 mt-0.5 border border-red-100">
+                <div className="w-7 h-7 rounded-full bg-pink-50 text-pink-400 flex items-center justify-center flex-shrink-0 mt-0.5 border border-pink-200/60">
                   <X size={14} />
                 </div>
                 <div>
@@ -104,7 +104,7 @@ export function Differentiator({ onOpenEstimator }: DifferentiatorProps) {
               {/* Wedding Shoot Side */}
               <div className="bg-white border border-plum/20 rounded-xl p-5 md:p-6 flex items-start gap-4 shadow-md hover:shadow-xl hover:border-plum/40 transition-all duration-300 relative group overflow-hidden">
                 <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-bl from-orchid/10 to-transparent rounded-bl-full pointer-events-none" />
-                <div className="w-7 h-7 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center flex-shrink-0 mt-0.5 border border-emerald-100 group-hover:scale-110 transition-transform">
+                <div className="w-7 h-7 rounded-full bg-pink-100/80 text-plum flex items-center justify-center flex-shrink-0 mt-0.5 border border-pink-300/60 group-hover:scale-110 group-hover:bg-plum group-hover:text-white transition-all">
                   <Check size={14} strokeWidth={2.5} />
                 </div>
                 <div>
