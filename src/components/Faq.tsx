@@ -51,7 +51,7 @@ export function Faq() {
   };
 
   return (
-    <section className="bg-white py-12 md:py-16 px-6 md:px-12" id="faq">
+    <section className="bg-white py-8 md:py-16 px-6 md:px-12" id="faq">
       {/* Insert JSON-LD Schema */}
       <script
         type="application/ld+json"

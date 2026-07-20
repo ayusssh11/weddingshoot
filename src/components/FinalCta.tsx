@@ -15,7 +15,7 @@ export function FinalCta({ onOpenEstimator }: FinalCtaProps) {
   const whatsappUrl = "https://wa.me/918700609950?text=Hi%2C%20I%20would%20like%20to%20inquire%20about%20my%20wedding%20date%21";
 
   return (
-    <section className="bg-obsidian text-alabaster py-16 md:py-20 px-6 md:px-12 relative overflow-hidden" id="final-cta">
+    <section className="bg-obsidian text-alabaster py-10 md:py-20 px-6 md:px-12 relative overflow-hidden" id="final-cta">
       {/* Editorial backdrop light */}
       <div className="absolute inset-0 bg-gradient-to-t from-plum/10 via-transparent to-transparent opacity-60"></div>
       

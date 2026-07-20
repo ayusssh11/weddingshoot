@@ -47,13 +47,13 @@ export function Header({ onOpenEstimator }: HeaderProps) {
         transition={{ duration: 0.6, ease: 'easeOut' }}
         className={`fixed top-0 left-0 w-full z-50 transition-all duration-500 ease-in-out ${
           isScrolled || isMobileMenuOpen
-            ? 'bg-white/95 backdrop-blur-md py-4 shadow-sm border-b border-warm-gray/20'
-            : 'bg-transparent py-6 border-b border-white/10'
+            ? 'bg-white/95 backdrop-blur-md py-3 sm:py-4 shadow-sm border-b border-warm-gray/20'
+            : 'bg-transparent py-4 sm:py-6 border-b border-white/10'
         }`}
       >
-        <div className="container mx-auto px-6 md:px-12 flex justify-between items-center">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8 xl:px-12 flex justify-between items-center">
           {/* Logo */}
-          <a href="/" className="group flex items-center h-12 md:h-16 relative z-50">
+          <a href="/" className="group flex items-center h-10 sm:h-12 md:h-14 relative z-50 flex-shrink-0">
             <img 
               src="https://weddingshoot.in/wp-content/uploads/Wedding-Shoot-Logo-01.png" 
               alt="Wedding Shoot Logo" 
@@ -61,13 +61,13 @@ export function Header({ onOpenEstimator }: HeaderProps) {
             />
           </a>
 
-          {/* Desktop Nav */}
-          <nav className="hidden lg:flex items-center space-x-8">
+          {/* Desktop Nav (Only shown on xl screens 1280px+ to prevent crowding/overlap) */}
+          <nav className="hidden xl:flex items-center space-x-4 2xl:space-x-7 flex-shrink">
             {navItems.map((item) => (
               <a
                 key={item.name}
                 href={item.href}
-                className={`text-[11px] tracking-widest uppercase font-bold transition-colors duration-300 hover:text-orchid ${
+                className={`text-[10px] 2xl:text-[11px] tracking-wider uppercase font-bold whitespace-nowrap transition-colors duration-300 hover:text-orchid ${
                   isScrolled ? 'text-charcoal/80' : 'text-alabaster/90'
                 }`}
               >
@@ -76,68 +76,80 @@ export function Header({ onOpenEstimator }: HeaderProps) {
             ))}
           </nav>
 
-          {/* Desktop CTA Button */}
-          <div className="hidden lg:block">
+          {/* Right Action Stack: Desktop CTA + Mobile Menu Button */}
+          <div className="flex items-center gap-3 sm:gap-4 relative z-50">
+            {/* CTA Button */}
             <button
               onClick={onOpenEstimator}
-              className={`px-6 py-3 rounded-full text-xs tracking-widest uppercase font-bold transition-all duration-500 border cursor-pointer ${
-                isScrolled
+              className={`hidden sm:inline-block px-4 sm:px-6 py-2.5 sm:py-3 rounded-full text-[10px] sm:text-xs tracking-widest uppercase font-bold whitespace-nowrap transition-all duration-500 border cursor-pointer ${
+                isScrolled || isMobileMenuOpen
                   ? 'border-charcoal/20 text-charcoal hover:border-plum hover:text-plum'
                   : 'border-alabaster/40 text-alabaster hover:bg-alabaster/10 hover:border-alabaster'
               }`}
             >
               Check Availability
             </button>
+            
+            {/* Hamburger menu button (Shown below xl breakpoint) */}
+            <button 
+              className={`xl:hidden p-2 transition-colors duration-300 relative z-50 cursor-pointer ${isScrolled || isMobileMenuOpen ? 'text-charcoal' : 'text-white'}`}
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              aria-label="Toggle mobile menu"
+            >
+              {isMobileMenuOpen ? <X size={26} /> : <Menu size={26} />}
+            </button>
           </div>
-          
-          {/* Mobile menu button */}
-          <button 
-            className={`lg:hidden p-2 transition-colors duration-300 relative z-50 ${isScrolled || isMobileMenuOpen ? 'text-charcoal' : 'text-white'}`}
-            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            aria-label="Toggle mobile menu"
-          >
-            {isMobileMenuOpen ? <X size={28} /> : <Menu size={28} />}
-          </button>
         </div>
       </motion.header>
 
-      {/* Mobile Menu Overlay */}
+      {/* Mobile/Tablet Drawer Navigation */}
       <AnimatePresence>
         {isMobileMenuOpen && (
           <motion.div 
-            initial={{ opacity: 0, y: -20 }}
+            initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
+            exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.3, ease: 'easeInOut' }}
-            className="fixed inset-0 z-40 bg-white/95 backdrop-blur-xl flex flex-col items-center justify-center pt-20 h-screen w-full"
+            className="fixed inset-0 z-40 bg-white/98 backdrop-blur-2xl flex flex-col items-center justify-between pt-24 pb-10 px-6 h-screen w-full overflow-y-auto"
           >
-            <nav className="flex flex-col items-center space-y-6 mb-10">
+            <nav className="flex flex-col items-center space-y-4 sm:space-y-6 my-auto">
               {navItems.map((item, index) => (
                 <motion.a
                   key={item.name}
                   href={item.href}
                   onClick={() => setIsMobileMenuOpen(false)}
-                  initial={{ opacity: 0, y: 20 }}
+                  initial={{ opacity: 0, y: 15 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: index * 0.05 + 0.05 }}
-                  className="text-xl font-serif text-charcoal tracking-widest uppercase hover:text-orchid transition-colors duration-300"
+                  transition={{ delay: index * 0.04 + 0.05 }}
+                  className="text-lg sm:text-2xl font-serif text-charcoal tracking-widest uppercase hover:text-plum transition-colors duration-300"
                 >
                   {item.name}
                 </motion.a>
               ))}
             </nav>
-            <motion.button
-              onClick={() => {
-                setIsMobileMenuOpen(false);
-                onOpenEstimator();
-              }}
-              initial={{ opacity: 0, y: 20 }}
+
+            <motion.div
+              initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: navItems.length * 0.05 + 0.05 }}
-              className="px-8 py-4 bg-charcoal text-white rounded-full text-xs tracking-widest uppercase font-bold transition-all duration-500 hover:bg-orchid cursor-pointer"
+              transition={{ delay: navItems.length * 0.04 + 0.05 }}
+              className="flex flex-col items-center gap-6 w-full max-w-xs"
             >
-              Check Availability
-            </motion.button>
+              <button
+                onClick={() => {
+                  setIsMobileMenuOpen(false);
+                  onOpenEstimator();
+                }}
+                className="w-full py-3.5 bg-obsidian text-white rounded-full text-xs tracking-widest uppercase font-bold transition-all duration-500 hover:bg-plum cursor-pointer shadow-lg"
+              >
+                Check Availability
+              </button>
+
+              <div className="flex items-center justify-center gap-6 text-[10px] tracking-widest uppercase font-bold text-charcoal/50">
+                <a href="http://bit.ly/amandigitalphotography" target="_blank" rel="noopener noreferrer" className="hover:text-plum">Facebook</a>
+                <a href="http://bit.ly/weddingshoot1" target="_blank" rel="noopener noreferrer" className="hover:text-plum">Instagram</a>
+                <a href="https://www.youtube.com/channel/UC9IWnICeJGHk0gvQgQ4PXWQ" target="_blank" rel="noopener noreferrer" className="hover:text-plum">YouTube</a>
+              </div>
+            </motion.div>
           </motion.div>
         )}
       </AnimatePresence>
