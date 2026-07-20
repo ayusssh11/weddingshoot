@@ -27,7 +27,7 @@ export function TestimonialsRedesigned() {
   ];
 
   return (
-    <section className="bg-ivory py-12 md:py-16 px-6 md:px-12" id="testimonials">
+    <section className="bg-ivory py-8 md:py-16 px-6 md:px-12" id="testimonials">
       <div className="container mx-auto max-w-5xl">
         {/* Header Stack */}
         <div className="text-center mb-10 md:mb-14">

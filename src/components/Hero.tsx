@@ -81,7 +81,7 @@ export function Hero({ onOpenEstimator }: HeroProps) {
       {/* HERO BANNER SECTION */}
       <section 
         ref={containerRef}
-        className="relative h-screen w-full flex items-center justify-center bg-obsidian select-none z-10"
+        className="relative h-[85vh] min-h-[580px] md:h-screen w-full flex items-center justify-center bg-obsidian select-none z-10"
       >
         {/* Parallax Background Container (clipped) */}
         <div className="absolute inset-0 z-0 overflow-hidden">
@@ -92,59 +92,80 @@ export function Hero({ onOpenEstimator }: HeroProps) {
             <img 
               src="/images/Hero-section.webp" 
               alt="Wedding Story Floral Arch" 
-              className="w-full h-full object-cover object-[center_35%] md:object-[center_30%] brightness-95 opacity-90"
+              className="w-full h-full object-cover object-[85%_22%] sm:object-[center_32%] md:object-[center_30%] scale-[1.05] sm:scale-100 brightness-[1.03] contrast-[1.05] opacity-95 transition-all duration-300"
             />
             {/* Subtle Scrim Gradient Overlay for readability */}
-            <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/15 to-black/55" />
+            <div className="absolute inset-0 bg-gradient-to-b from-black/55 via-black/30 to-black/70" />
           </motion.div>
         </div>
 
         {/* Center Content Stack */}
-        <div className="relative z-20 text-center px-6 md:px-12 max-w-4xl mx-auto flex flex-col items-center justify-center -mt-8 sm:-mt-12">
+        <div className="relative z-20 text-center px-4 sm:px-8 md:px-12 max-w-4xl mx-auto flex flex-col items-center justify-center -mt-6 sm:-mt-16">
           
           {/* Headline */}
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
-            className="mb-8"
+            className="mb-6 sm:mb-8"
           >
-            <h1 className="text-white font-serif text-4xl sm:text-6xl md:text-7xl lg:text-8xl tracking-tight leading-[1.1] drop-shadow-lg font-light">
+            <h1 className="text-white font-serif text-3xl sm:text-6xl md:text-7xl lg:text-8xl tracking-tight leading-[1.12] drop-shadow-lg font-light">
               Make A Wonderful Story
-              <span className="block font-serif text-3xl sm:text-5xl md:text-6xl lg:text-7xl mt-2 sm:mt-4 font-normal text-white/95">
+              <span className="block font-serif text-2.5xl sm:text-5xl md:text-6xl lg:text-7xl mt-2 sm:mt-4 font-normal text-white/95">
                 For Your Wedding
               </span>
             </h1>
           </motion.div>
 
-          {/* VIEW PORTFOLIO Button */}
+          {/* VIEW PORTFOLIO & CHECK AVAILABILITY Buttons */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
-            className="flex flex-col sm:flex-row items-center justify-center gap-4"
+            className="flex flex-col sm:flex-row items-center justify-center gap-3.5 w-full max-w-xs sm:max-w-none px-4"
           >
             <button 
               onClick={handleViewPortfolio}
-              className="px-9 py-3.5 border border-white/70 bg-black/10 backdrop-blur-xs text-white text-[11px] sm:text-xs tracking-[0.25em] uppercase font-sans font-medium hover:bg-white hover:text-obsidian hover:border-white transition-all duration-500 shadow-lg cursor-pointer"
+              className="w-full sm:w-auto px-8 sm:px-9 py-3.5 border border-white/70 bg-black/20 backdrop-blur-xs text-white text-[10px] sm:text-xs tracking-[0.25em] uppercase font-sans font-medium hover:bg-white hover:text-obsidian hover:border-white transition-all duration-500 shadow-lg cursor-pointer"
             >
               View Portfolio
             </button>
             <button 
               onClick={onOpenEstimator}
-              className="px-9 py-3.5 bg-white text-obsidian text-[11px] sm:text-xs tracking-[0.25em] uppercase font-sans font-semibold hover:bg-orchid hover:text-white transition-all duration-500 shadow-lg cursor-pointer hidden md:inline-block"
+              className="w-full sm:w-auto px-8 sm:px-9 py-3.5 bg-white text-obsidian text-[10px] sm:text-xs tracking-[0.25em] uppercase font-sans font-semibold hover:bg-orchid hover:text-white transition-all duration-500 shadow-lg cursor-pointer hidden sm:inline-block"
             >
               Check Availability
             </button>
           </motion.div>
+
+          {/* Mobile Social Links Row (Under CTA Button) */}
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 1, delay: 0.4 }}
+            className="flex md:hidden items-center justify-center gap-3 mt-6"
+          >
+            {socialLinks.map((social) => (
+              <a
+                key={social.name}
+                href={social.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={social.name}
+                className="w-8 h-8 rounded-full border border-white/40 bg-black/40 backdrop-blur-xs text-white flex items-center justify-center hover:bg-white hover:text-obsidian transition-all duration-300 shadow-md cursor-pointer"
+              >
+                {social.icon}
+              </a>
+            ))}
+          </motion.div>
         </div>
 
-        {/* Bottom-Left Social Media Icons */}
+        {/* Desktop Bottom-Left Social Media Icons */}
         <motion.div 
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 1, delay: 0.5, ease: [0.16, 1, 0.3, 1] }}
-          className="absolute bottom-8 left-6 md:left-12 z-30 flex items-center gap-3"
+          className="hidden md:flex absolute bottom-8 left-8 md:left-12 z-30 items-center gap-3"
         >
           {socialLinks.map((social) => (
             <a
@@ -162,16 +183,16 @@ export function Hero({ onOpenEstimator }: HeroProps) {
           ))}
         </motion.div>
 
-        {/* Bottom-Right Overlapping Highlight Card */}
+        {/* Bottom-Right Overlapping Highlight Card (Responsive for Mobile) */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1.2, delay: 0.6, ease: [0.16, 1, 0.3, 1] }}
           onClick={() => setIsVideoModalOpen(true)}
-          className="absolute bottom-0 right-6 md:right-12 translate-y-1/2 z-30 flex items-stretch bg-white shadow-[0_20px_50px_rgba(0,0,0,0.18)] rounded-lg overflow-hidden border border-black/5 hover:shadow-[0_30px_70px_rgba(0,0,0,0.28)] hover:-translate-y-[calc(-50%+4px)] transition-all duration-300 group max-w-[340px] sm:max-w-md cursor-pointer"
+          className="absolute bottom-0 left-4 right-4 sm:left-auto sm:right-8 md:right-12 translate-y-1/2 z-30 flex items-stretch bg-white shadow-[0_20px_50px_rgba(0,0,0,0.18)] rounded-xl overflow-hidden border border-black/5 hover:shadow-[0_30px_70px_rgba(0,0,0,0.28)] hover:-translate-y-[calc(-50%+4px)] transition-all duration-300 group max-w-sm sm:max-w-md cursor-pointer mx-auto sm:mx-0"
         >
           {/* Thumbnail Image with Play Button */}
-          <div className="relative w-32 sm:w-44 h-24 sm:h-28 flex-shrink-0 overflow-hidden bg-obsidian">
+          <div className="relative w-28 sm:w-40 md:w-44 h-20 sm:h-24 md:h-28 flex-shrink-0 overflow-hidden bg-obsidian">
             <img 
               src="https://weddingshoot.in/wp-content/uploads/2022/02/7Q8A1025.webp" 
               alt="Shama & Sourya Wedding Film" 
@@ -179,35 +200,35 @@ export function Hero({ onOpenEstimator }: HeroProps) {
             />
             <div className="absolute inset-0 bg-black/25 group-hover:bg-black/10 transition-colors" />
             
-            {/* Centered Play Icon with pulse ring */}
+            {/* Centered Play Icon */}
             <div className="absolute inset-0 flex items-center justify-center">
               <div className="relative flex items-center justify-center">
                 <div className="absolute -inset-2 rounded-full bg-white/30 animate-ping opacity-40 group-hover:opacity-75" />
-                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-white text-obsidian flex items-center justify-center shadow-xl group-hover:scale-110 group-hover:bg-plum group-hover:text-white transition-all duration-300">
-                  <Play size={18} className="fill-current ml-0.5" />
+                <div className="w-8 h-8 sm:w-11 sm:h-11 rounded-full bg-white text-obsidian flex items-center justify-center shadow-xl group-hover:scale-110 group-hover:bg-plum group-hover:text-white transition-all duration-300">
+                  <Play size={14} className="fill-current ml-0.5 sm:w-4 sm:h-4" />
                 </div>
               </div>
             </div>
           </div>
 
           {/* Card Details */}
-          <div className="bg-white p-4 sm:p-5 flex-1 flex flex-col justify-center border-l border-warm-gray/15">
-            <span className="text-[9px] font-sans font-bold tracking-[0.25em] text-plum uppercase mb-1 flex items-center gap-1.5">
+          <div className="bg-white p-3 sm:p-4 md:p-5 flex-1 flex flex-col justify-center border-l border-warm-gray/15 min-w-0">
+            <span className="text-[8px] sm:text-[9px] font-sans font-bold tracking-[0.25em] text-plum uppercase mb-0.5 flex items-center gap-1">
               <span className="w-1.5 h-1.5 rounded-full bg-orchid animate-pulse" />
               Watch Reel
             </span>
-            <h3 className="font-serif text-sm sm:text-base font-semibold text-obsidian leading-snug group-hover:text-plum transition-colors">
+            <h3 className="font-serif text-xs sm:text-sm md:text-base font-semibold text-obsidian leading-snug group-hover:text-plum transition-colors truncate">
               Shama &amp; Sourya getting hitched
             </h3>
-            <p className="text-[11px] sm:text-xs text-charcoal/60 mt-1 font-light font-sans tracking-wide">
+            <p className="text-[10px] sm:text-[11px] text-charcoal/60 mt-0.5 font-light font-sans tracking-wide truncate">
               @Koh Samui Thailand
             </p>
           </div>
         </motion.div>
       </section>
 
-      {/* ABOUT US / WELCOME SECTION BELOW HERO (Matches Image 2) */}
-      <section className="bg-[#FAF8F5] pt-24 sm:pt-32 pb-16 sm:pb-24 px-6 md:px-12 text-center relative overflow-hidden border-b border-warm-gray/20">
+      {/* ABOUT US / WELCOME SECTION BELOW HERO */}
+      <section className="bg-[#FAF8F5] pt-12 sm:pt-32 pb-10 sm:pb-24 px-6 md:px-12 text-center relative overflow-hidden border-b border-warm-gray/20">
         {/* Floating background cursive text overlay */}
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-10 pointer-events-none select-none w-full">
           <span className="font-script text-7xl sm:text-9xl md:text-[11rem] text-charcoal tracking-wide whitespace-nowrap block">

@@ -48,7 +48,7 @@ export function Locations() {
   ];
 
   return (
-    <section className="bg-ivory py-12 md:py-16 px-6 md:px-12" id="locations">
+    <section className="bg-ivory py-8 md:py-16 px-6 md:px-12" id="locations">
       <div className="container mx-auto">
         {/* Header Stack */}
         <div className="text-center mb-10 md:mb-14 max-w-2xl mx-auto">

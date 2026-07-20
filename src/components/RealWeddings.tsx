@@ -85,10 +85,10 @@ export function RealWeddings() {
   };
 
   return (
-    <section className="bg-white py-20 md:py-28 px-6 md:px-12 overflow-hidden" id="real-weddings">
+    <section className="bg-white py-10 md:py-28 px-6 md:px-12 overflow-hidden" id="real-weddings">
       <div className="max-w-7xl mx-auto">
         {/* Header Stack */}
-        <div className="relative text-center overflow-hidden mb-16 pb-10 border-b border-warm-gray/20">
+        <div className="relative text-center overflow-hidden mb-10 pb-6 md:mb-16 md:pb-10 border-b border-warm-gray/20">
           {/* Floating background cursive text overlay */}
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-10 pointer-events-none select-none w-full">
             <span className="font-script text-7xl sm:text-9xl md:text-[11rem] text-charcoal tracking-wide whitespace-nowrap block">

@@ -41,7 +41,7 @@ export function HowWeQuote({ onOpenEstimator }: HowWeQuoteProps) {
   ];
 
   return (
-    <section className="bg-gradient-to-b from-[#FAF6F0] via-[#FFFDF9] to-[#FAF6F0] py-16 md:py-24 px-6 md:px-12 relative overflow-hidden select-none" id="how-we-quote">
+    <section className="bg-gradient-to-b from-[#FAF6F0] via-[#FFFDF9] to-[#FAF6F0] py-10 md:py-24 px-6 md:px-12 relative overflow-hidden select-none" id="how-we-quote">
 
       {/* Background Pink Bougainvillea Leaves Image (Top Left) */}
       <img
@@ -105,7 +105,7 @@ export function HowWeQuote({ onOpenEstimator }: HowWeQuoteProps) {
               <motion.div
                 key={step.number}
                 {...fadeUp(index * 0.12)}
-                className="bg-[#FAF6EC]/80 rounded-[28px] p-6 md:p-7 shadow-[0_15px_35px_rgba(42,27,40,0.05)] hover:shadow-[0_25px_50px_rgba(139,51,127,0.15)] transition-all duration-500 border border-amber-900/10 hover:border-plum/40 flex flex-col justify-between group cursor-pointer relative overflow-hidden min-h-[300px] backdrop-blur-sm"
+                className="bg-white rounded-[28px] p-6 md:p-7 shadow-[0_10px_30px_rgba(0,0,0,0.06)] hover:shadow-[0_20px_45px_rgba(139,51,127,0.14)] transition-all duration-500 border border-warm-gray/25 hover:border-plum/40 flex flex-col justify-between group cursor-pointer relative overflow-hidden min-h-[290px]"
               >
                 {/* Background Watermark Step Number */}
                 <span className="text-7xl xl:text-8xl font-serif text-charcoal/[0.04] font-bold absolute -bottom-2 -right-2 select-none pointer-events-none transition-transform duration-500 group-hover:scale-110">
@@ -115,11 +115,11 @@ export function HowWeQuote({ onOpenEstimator }: HowWeQuoteProps) {
                 <div>
                   {/* Card Header Row: Icon Badge & Step Number Tag */}
                   <div className="flex items-center justify-between mb-6">
-                    <div className="w-12 h-12 rounded-full bg-white border border-amber-900/15 flex items-center justify-center text-plum shadow-xs group-hover:bg-plum group-hover:text-white transition-colors duration-300">
+                    <div className="w-12 h-12 rounded-full bg-[#FAF6F0] border border-amber-900/10 flex items-center justify-center text-plum shadow-xs group-hover:bg-plum group-hover:text-white transition-colors duration-300">
                       <IconComp size={22} strokeWidth={1.5} />
                     </div>
 
-                    <span className="text-[10px] font-mono tracking-[0.2em] uppercase font-semibold text-pink-400/90 bg-white/70 px-2.5 py-1 rounded-full border border-pink-200/50">
+                    <span className="text-[10px] font-mono tracking-[0.2em] uppercase font-semibold text-pink-500 bg-pink-50/80 px-2.5 py-1 rounded-full border border-pink-200/50">
                       STEP {step.number}
                     </span>
                   </div>
@@ -137,7 +137,7 @@ export function HowWeQuote({ onOpenEstimator }: HowWeQuoteProps) {
 
                 {/* Bottom Right Arrow Button */}
                 <div className="flex justify-end pt-2 relative z-10">
-                  <div className="w-9 h-9 rounded-full border border-amber-900/20 bg-white shadow-xs flex items-center justify-center text-charcoal/60 group-hover:bg-plum group-hover:text-white group-hover:border-plum transition-all duration-300">
+                  <div className="w-9 h-9 rounded-full border border-amber-900/15 bg-[#FAF6F0] shadow-xs flex items-center justify-center text-charcoal/60 group-hover:bg-plum group-hover:text-white group-hover:border-plum transition-all duration-300">
                     <ChevronRight size={16} className="transform group-hover:translate-x-0.5 transition-transform" />
                   </div>
                 </div>

@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowRight, Sparkles, Lock, Unlock } from 'lucide-react';
+import { ArrowRight, Sparkles } from 'lucide-react';
 
 export function Services() {
   const targetRef = useRef<HTMLDivElement>(null);
@@ -50,7 +50,6 @@ export function Services() {
       if (!section) return;
 
       const rect = section.getBoundingClientRect();
-      // Section is active when its top is near top of screen
       const isTopAligned = rect.top <= 80 && rect.bottom >= window.innerHeight;
 
       if (!isTopAligned) return;
@@ -127,9 +126,6 @@ export function Services() {
   const rawIndex = Math.round(normalizedAngle / stepSize) % services.length;
   const activeIndex = (services.length - rawIndex) % services.length;
   const activeService = services[activeIndex];
-
-  const progressPercent = Math.min(100, (revolutionAngle / 360) * 100);
-  const isComplete = revolutionAngle >= 360;
 
   return (
     <section 
@@ -279,11 +275,10 @@ export function Services() {
             })}
           </motion.div>
         </div>
-
       </div>
 
       {/* MOBILE & TABLET FALLBACK (< lg) */}
-      <div className="lg:hidden py-16 px-6 max-w-xl mx-auto z-10 relative">
+      <div className="lg:hidden py-8 px-6 max-w-xl mx-auto z-10 relative">
         <div className="text-center mb-10">
           <span className="text-[10px] tracking-[0.35em] text-plum uppercase font-semibold block mb-2 font-sans">
             Our Offerings
@@ -299,7 +294,6 @@ export function Services() {
             <button
               key={srv.id}
               onClick={() => {
-                setActiveIndex(index);
                 setRevolutionAngle((4 - index) % 4 * 90);
               }}
               className={`px-4 py-2 rounded-full text-xs tracking-wider uppercase font-sans font-bold whitespace-nowrap transition-all duration-300 ${
