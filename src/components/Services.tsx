@@ -1,14 +1,11 @@
 import { useState, useRef, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, useScroll, useTransform, useSpring } from 'framer-motion';
 import { ArrowRight, Sparkles } from 'lucide-react';
 
 export function Services() {
-  const targetRef = useRef<HTMLDivElement>(null);
-  const [revolutionAngle, setRevolutionAngle] = useState(0);
+  const containerRef = useRef<HTMLDivElement>(null);
   const [radius, setRadius] = useState(300);
-  const angleRef = useRef(0);
-  angleRef.current = revolutionAngle;
-  const isScrolling = useRef(false);
+  const [activeOverrideAngle, setActiveOverrideAngle] = useState<number | null>(null);
 
   const services = [
     {
@@ -51,13 +48,12 @@ export function Services() {
       const w = window.innerWidth;
       const h = window.innerHeight;
 
-      // On shorter laptop screens (e.g. height <= 800px or width < 1440px)
       if (h <= 800 || w < 1366) {
-        setRadius(270);
+        setRadius(260);
       } else if (w < 1536) {
-        setRadius(330);
+        setRadius(320);
       } else {
-        setRadius(380);
+        setRadius(370);
       }
     };
 
@@ -66,104 +62,47 @@ export function Services() {
     return () => window.removeEventListener('resize', updateRadius);
   }, []);
 
-  // Smooth 90-degree step snapping on scroll
+  // Sticky Scroll Progress Pipeline
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start start", "end end"]
+  });
+
+  // Map scroll progress (0 -> 1) to revolution angle (0deg -> 270deg)
+  const rawAngle = useTransform(scrollYProgress, [0, 1], [0, 270]);
+  const smoothAngle = useSpring(rawAngle, { damping: 28, stiffness: 90 });
+
+  const [currentAngle, setCurrentAngle] = useState(0);
+
   useEffect(() => {
-    const handleWheel = (e: WheelEvent) => {
-      const section = targetRef.current;
-      if (!section) return;
-
-      const rect = section.getBoundingClientRect();
-      const isCentered = rect.top <= 140 && rect.bottom >= window.innerHeight - 140;
-
-      if (!isCentered) return;
-
-      const current = angleRef.current;
-
-      // Scroll Down -> Snap to next 90-degree step (0 -> 90 -> 180 -> 270)
-      if (e.deltaY > 0 && current < 270) {
-        e.preventDefault();
-        if (isScrolling.current) return;
-        isScrolling.current = true;
-        const next = Math.min(270, (Math.floor(current / 90) + 1) * 90);
-        setRevolutionAngle(next);
-        setTimeout(() => { isScrolling.current = false; }, 900);
-        return;
+    return smoothAngle.on("change", (latest) => {
+      if (activeOverrideAngle === null) {
+        setCurrentAngle(latest);
       }
+    });
+  }, [smoothAngle, activeOverrideAngle]);
 
-      // Scroll Up -> Snap to previous 90-degree step (270 -> 180 -> 90 -> 0)
-      if (e.deltaY < 0 && current > 0 && rect.top >= -50) {
-        e.preventDefault();
-        if (isScrolling.current) return;
-        isScrolling.current = true;
-        const next = Math.max(0, (Math.ceil(current / 90) - 1) * 90);
-        setRevolutionAngle(next);
-        setTimeout(() => { isScrolling.current = false; }, 900);
-        return;
-      }
-    };
-
-    let touchStartY = 0;
-    const handleTouchStart = (e: TouchEvent) => {
-      touchStartY = e.touches[0].clientY;
-    };
-
-    const handleTouchMove = (e: TouchEvent) => {
-      const section = targetRef.current;
-      if (!section) return;
-
-      const rect = section.getBoundingClientRect();
-      const isCentered = rect.top <= 140 && rect.bottom >= window.innerHeight - 140;
-      if (!isCentered) return;
-
-      const currentY = e.touches[0].clientY;
-      const deltaY = touchStartY - currentY;
-      const current = angleRef.current;
-
-      if (deltaY > 30 && current < 270) {
-        e.preventDefault();
-        if (isScrolling.current) return;
-        isScrolling.current = true;
-        const next = Math.min(270, (Math.floor(current / 90) + 1) * 90);
-        setRevolutionAngle(next);
-        touchStartY = currentY;
-        setTimeout(() => { isScrolling.current = false; }, 900);
-        return;
-      }
-
-      if (deltaY < -30 && current > 0 && rect.top >= -50) {
-        e.preventDefault();
-        if (isScrolling.current) return;
-        isScrolling.current = true;
-        const next = Math.max(0, (Math.ceil(current / 90) - 1) * 90);
-        setRevolutionAngle(next);
-        touchStartY = currentY;
-        setTimeout(() => { isScrolling.current = false; }, 900);
-        return;
-      }
-    };
-
-    window.addEventListener('wheel', handleWheel, { passive: false });
-    window.addEventListener('touchstart', handleTouchStart, { passive: true });
-    window.addEventListener('touchmove', handleTouchMove, { passive: false });
-
-    return () => {
-      window.removeEventListener('wheel', handleWheel);
-      window.removeEventListener('touchstart', handleTouchStart);
-      window.removeEventListener('touchmove', handleTouchMove);
-    };
-  }, []);
+  const displayAngle = activeOverrideAngle !== null ? activeOverrideAngle : currentAngle;
 
   // Compute active index from current revolution angle
   const stepSize = 360 / services.length; // 90deg per service
-  const normalizedAngle = ((revolutionAngle % 360) + 360) % 360;
+  const normalizedAngle = ((displayAngle % 360) + 360) % 360;
   const rawIndex = Math.round(normalizedAngle / stepSize) % services.length;
   const activeIndex = (services.length - rawIndex) % services.length;
   const activeService = services[activeIndex];
 
+  const handleCardClick = (index: number) => {
+    const target = (4 - index) % 4 * 90;
+    setActiveOverrideAngle(target);
+    setTimeout(() => {
+      setActiveOverrideAngle(null);
+    }, 1200);
+  };
+
   return (
     <section 
-      ref={targetRef}
-      className="relative bg-[#FAF8F4] min-h-screen lg:h-screen overflow-hidden select-none" 
+      ref={containerRef}
+      className="relative bg-[#FAF8F4] min-h-screen lg:h-[260vh] select-none" 
       id="services"
     >
       {/* Background Radial Glow */}
@@ -176,8 +115,8 @@ export function Services() {
         </span>
       </div>
 
-      {/* DESKTOP ORBITAL SHOWCASE STAGE (Responsively proportioned for laptops) */}
-      <div className="hidden lg:flex h-screen w-full flex-col items-center justify-between pt-20 pb-6 px-6 max-w-[1400px] mx-auto z-10 relative">
+      {/* DESKTOP ORBITAL SHOWCASE STAGE (Sticky Pinned for Butter Smooth Scroll) */}
+      <div className="hidden lg:flex sticky top-0 h-screen w-full flex-col items-center justify-between pt-20 pb-6 px-6 max-w-[1400px] mx-auto z-10 overflow-hidden">
         
         {/* Header Stack */}
         <div className="text-center z-20">
@@ -192,7 +131,7 @@ export function Services() {
         {/* Orbital Showcase Stage */}
         <div className="relative w-full flex-1 flex items-center justify-center">
           
-          {/* Orbital Circle Path Line (Responsive diameter) */}
+          {/* Orbital Circle Path Line */}
           <div 
             style={{ width: `${radius * 2}px`, height: `${radius * 2}px` }}
             className="absolute rounded-full border border-charcoal/10 pointer-events-none flex items-center justify-center transition-all duration-300"
@@ -242,8 +181,8 @@ export function Services() {
 
           {/* ROTATING ORBIT CONTAINER */}
           <motion.div 
-            animate={{ rotate: revolutionAngle }}
-            transition={{ duration: 1.1, ease: [0.16, 1, 0.3, 1] }}
+            animate={{ rotate: displayAngle }}
+            transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
             style={{ width: `${radius * 2}px`, height: `${radius * 2}px` }}
             className="absolute z-30 pointer-events-none transition-all duration-300"
           >
@@ -269,12 +208,12 @@ export function Services() {
                   {/* COUNTER-ROTATE CARD TO KEEP TYPOGRAPHY PERFECTLY HORIZONTAL */}
                   <motion.div
                     animate={{ 
-                      rotate: -revolutionAngle,
+                      rotate: -displayAngle,
                       scale: isActive ? 1.04 : 0.85,
                       opacity: isActive ? 1 : 0.55
                     }}
-                    transition={{ duration: 1.1, ease: [0.16, 1, 0.3, 1] }}
-                    onClick={() => setRevolutionAngle((4 - index) % 4 * 90)}
+                    transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
+                    onClick={() => handleCardClick(index)}
                     className={`w-[210px] xl:w-[240px] 2xl:w-[260px] p-3.5 xl:p-4 rounded-[18px] xl:rounded-[22px] transition-all duration-500 cursor-pointer backdrop-blur-xl ${
                       isActive 
                         ? 'bg-white/95 border-2 border-plum/40 shadow-[0_20px_45px_rgba(139,51,127,0.2)]' 
@@ -317,7 +256,7 @@ export function Services() {
           {services.map((_, idx) => (
             <button
               key={idx}
-              onClick={() => setRevolutionAngle((4 - idx) % 4 * 90)}
+              onClick={() => handleCardClick(idx)}
               className={`h-1.5 rounded-full transition-all duration-300 cursor-pointer ${
                 idx === activeIndex ? 'w-8 bg-plum' : 'w-2 bg-charcoal/20 hover:bg-charcoal/40'
               }`}
@@ -343,9 +282,7 @@ export function Services() {
           {services.map((srv, index) => (
             <button
               key={srv.id}
-              onClick={() => {
-                setRevolutionAngle((4 - index) % 4 * 90);
-              }}
+              onClick={() => handleCardClick(index)}
               className={`px-4 py-2 rounded-full text-xs tracking-wider uppercase font-sans font-bold whitespace-nowrap transition-all duration-300 ${
                 index === activeIndex
                   ? 'bg-obsidian text-white shadow-md'
